@@ -1,0 +1,22 @@
+Package: TreeMatching
+Type: Package
+Title: Matching of Individual Trees in Forest Plot Inventories
+Version: 0.1.0
+Authors@R: c(person("Jean-Romain", "Roussel", email = "info@r-lidar.com", role = c("aut", "cre")))
+Description: Tools for matching individual trees between forest plot inventories. 
+    Provides 3D matching strategies based on spatial coordinates and DBH or height
+    dimensions using different matching strategies.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    clue,
+    graphics,
+    data.table,
+    methods,
+    sf,
+    RANN,
+    rgl
+RoxygenNote: 7.3.2
+Depends: 
+    R (>= 3.5)
