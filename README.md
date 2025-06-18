@@ -9,7 +9,7 @@ Matching trees between different surveys (e.g., lidar-derived and field-measured
 
 The current version includes two matching strategies:
 
-- Bidirectional 2-nearest-neighbor 3D matching  
+- Bidirectional 2-nearest-neighbors 3D matching  
 - Linear Sum Assignment Problem solving (Hungarian method)
 
 ## Example
