@@ -3,24 +3,31 @@
 #' @param x TreeMapMatching object
 #' @param y not used
 #' @param scale upscale tree diameters for a better readability of the plot
-#' @param rgl bool plot in 3D with rgl
+#' @param rgl bool. plot in 3D with rgl
+#' @param gg bool. Plot with ggplot instead of base R graphic system
 #' @param ... not used
 #' @exportS3Method
-plot.TreeMapMatching = function(x, y, scale = 1, rgl = FALSE, ...)
+plot.TreeMapMatching = function(x, y, scale = 1, rgl = FALSE, gg = FALSE, ...)
 {
   if (is.null(x$match_table))
   {
-    if (!rgl)
-      compare_plot(x, scale, ...)
-    else
+    if (rgl)
       compare_plot3d(x)
+
+    if (gg)
+      return(compare_plot_gg(x, scale, ...))
+    else
+      return(compare_plot(x, scale, ...))
   }
   else
   {
-    if (!rgl)
-      plot_spatial_matching(x, scale, ...)
-    else
+    if (rgl)
       plot_spatial_matching3d(x)
+
+    if (gg)
+      return(plot_spatial_matching_gg(x, scale, ...))
+    else
+      return(plot_spatial_matching(x, scale, ...))
   }
 }
 
@@ -42,9 +49,6 @@ compare_plot = function(treemap, scale = 1)
   radius = treemap$radius
   center = treemap$center
 
-  is_standardized(inventory)
-  is_standardized(measure)
-
   plot(sf::st_buffer(center, radius), border = "red", axes = T)
   plot(sf::st_buffer(center, 4), add = T, border = "blue")
   plot(center, add = T, col = "red", cex = 2, pch = 3)
@@ -56,6 +60,86 @@ compare_plot = function(treemap, scale = 1)
   plot(sf::st_geometry(shapes), add = T, col = "lightblue", border = "blue")
 
   graphics::legend(x = "topleft", legend=c("Ground truth", "Measurements"), fill = c("lightgreen","lightblue"), border = c("darkgreen", "blue"))
+}
+
+plot_plot_gg = function(treemap, scale = 1)
+{
+  inventory = treemap$inventory
+  measure = treemap$measured
+  radius = treemap$radius
+  center = treemap$center
+
+  # Compute distances and determine which measured points are inside the plot radius
+  d <- as.numeric(sf::st_distance(treemap$measured, treemap$center))
+  inside <- d < treemap$radius
+
+  # Filter matched indices
+  matched <- match_table[!is.na(match_table$index_inventory), ]
+
+  # Create circle geometries
+  shapes_inventory <- sf::st_buffer(inventory, inventory$DBH / 2 * scale)
+  shapes_measure <- sf::st_buffer(measure, measure$DBH / 2 * scale)
+
+  # Convert to sf objects with color and label columns
+  shapes_inventory <- sf::st_sf(geometry = sf::st_geometry(shapes_inventory), color = inventory$plot_color, label = inventory$label)
+  shapes_measure <- sf::st_sf(geometry = sf::st_geometry(shapes_measure), color = measure$plot_color, label = measure$label)
+
+  # Create line geometries for matched pairs
+  coord_inventory <- sf::st_coordinates(inventory)[matched$index_inventory, ]
+  coord_measure <- sf::st_coordinates(measure)[matched$index_measure, ]
+
+  # Prepare coordinate data frames for text labels
+  coords_inv <- sf::st_coordinates(inventory)
+  coords_inv_df <- data.frame(X = coords_inv[, 1], Y = coords_inv[, 2], label = shapes_inventory$label)
+
+  coords_mea <- sf::st_coordinates(measure)
+  coords_mea_df <- data.frame(X = coords_mea[, 1], Y = coords_mea[, 2], label = shapes_measure$label)
+
+  legend_df <- data.frame(
+    x = as.numeric(sf::st_coordinates(center)[1,1]), y = as.numeric(sf::st_coordinates(center)[1,2]),
+    class = factor(c("Ground truth", "Measurements"), levels = c("Ground truth", "Measurements"))
+  )
+
+  crs = sf::st_crs(inventory)
+
+  # Generate ggplot
+  ggplot2::ggplot() +
+    ggplot2::geom_sf(data = sf::st_buffer(treemap$center, 11.28), fill = NA, color = "red") +
+    ggplot2::geom_sf(data = sf::st_buffer(treemap$center, 4), fill = NA, color = "blue") +
+    ggplot2::geom_sf(data = treemap$center, shape = 3, size = 3, color = "red") +
+    ggplot2::geom_sf(data = shapes_inventory, fill = "lightgreen", color = "darkgreen") +
+    ggplot2::geom_text(data = coords_inv_df, ggplot2::aes(x = X + 0.2, y = Y + 0.2, label = label), size = 2) +
+    ggplot2::geom_sf(data = shapes_measure, fill = "lightblue", color = "blue") +
+    ggplot2::geom_text(data = coords_mea_df, ggplot2::aes(x = X - 0.2, y = Y - 0.2, label = label), size = 2) +
+    ggplot2::theme_minimal() +
+    ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "gray95")) +
+    ggplot2::geom_point(data = legend_df, ggplot2::aes(x = x, y = y, fill = class), shape = 21, size = 3) +
+    ggplot2::coord_sf(datum = crs) +
+    ggplot2::xlab("") +
+    ggplot2::ylab("") +
+    ggplot2::scale_fill_manual(
+      name = NULL,
+      values = c(
+        "Ground truth" = "lightgreen",
+        "Measurements" = "lightblue"
+      )
+    ) +
+    ggplot2::theme(
+      legend.position = c(0.02, 0.98),              # Position: top-left in normalized coordinates
+      legend.justification = c("left", "top"),      # Anchor corner of the legend box
+      legend.background = ggplot2::element_rect(    # White background box with black border
+        fill = "white",
+        color = "black",
+        linewidth = 0.2
+      ),
+      legend.key = ggplot2::element_rect(           # Optional: clean keys
+        fill = "white",
+        color = NA
+      ),
+      legend.title = ggplot2::element_text(size = 10),
+      legend.text = ggplot2::element_text(size = 9),
+      legend.key.size = ggplot2::unit(1, "lines")
+    )
 }
 
 compare_plot3d = function(treemap)
@@ -124,8 +208,8 @@ plot_spatial_matching = function(treemap, scale = 1)
   plot(sf_lines, add = T, col = "green")
 
   graphics::legend(x = "topleft",
-         legend=c("Omission", "Commision", "Matched", "Ground truth", "Outside plot"),
-         fill = c("orange","red", "darkgreen" , "black", "gray"))
+                   legend=c("Omission", "Commision", "Matched", "Ground truth", "Outside plot"),
+                   fill = c("orange","red", "darkgreen" , "black", "gray"))
 }
 
 plot_spatial_matching3d = function(treemap)
@@ -195,6 +279,111 @@ plot_spatial_matching3d = function(treemap)
   rgl::aspect3d("iso")
   rgl::axes3d()
   pan3d(2)
+}
+
+plot_spatial_matching_gg = function(treemap, scale = 1)
+{
+  inventory = treemap$inventory
+  measure = treemap$measured
+  radius = treemap$radius
+  center = treemap$center
+  match_table = treemap$match_table
+
+
+  # Compute distances and determine which measured points are inside the plot radius
+  d <- as.numeric(sf::st_distance(treemap$measured, treemap$center))
+  inside <- d < treemap$radius
+
+  # Filter matched indices
+  matched <- match_table[!is.na(match_table$index_inventory), ]
+
+  # Assign colors and labels to inventory points
+  inventory$plot_color <- "orange"
+  inventory$plot_color[matched$index_inventory] <- "black"
+  inventory$label <- seq_len(nrow(inventory))
+
+  # Assign colors and labels to measured points
+  measure$plot_color <- "red"
+  measure$plot_color[!inside] <- "gray"
+  measure$plot_color[matched$index_measure] <- "darkgreen"
+  measure$label <- seq_len(nrow(measure))
+
+  # Create circle geometries
+  shapes_inventory <- sf::st_buffer(inventory, inventory$DBH / 2 * scale)
+  shapes_measure <- sf::st_buffer(measure, measure$DBH / 2 * scale)
+
+  # Convert to sf objects with color and label columns
+  shapes_inventory <- sf::st_sf(geometry = sf::st_geometry(shapes_inventory), color = inventory$plot_color, label = inventory$label)
+  shapes_measure <- sf::st_sf(geometry = sf::st_geometry(shapes_measure), color = measure$plot_color, label = measure$label)
+
+  # Create line geometries for matched pairs
+  coord_inventory <- sf::st_coordinates(inventory)[matched$index_inventory, ]
+  coord_measure <- sf::st_coordinates(measure)[matched$index_measure, ]
+
+  make_line <- function(p1, p2) sf::st_linestring(rbind(p1, p2))
+  lines <- mapply(make_line,
+                  split(coord_inventory, row(coord_inventory)[, 1]),
+                  split(coord_measure, row(coord_measure)[, 1]),
+                  SIMPLIFY = FALSE)
+  sf_lines <- sf::st_sf(geometry = sf::st_sfc(lines, crs = sf::st_crs(inventory)))
+
+  # Prepare coordinate data frames for text labels
+  coords_inv <- sf::st_coordinates(inventory)
+  coords_inv_df <- data.frame(X = coords_inv[, 1], Y = coords_inv[, 2], label = shapes_inventory$label)
+
+  coords_mea <- sf::st_coordinates(measure)
+  coords_mea_df <- data.frame(X = coords_mea[, 1], Y = coords_mea[, 2], label = shapes_measure$label)
+
+  legend_df <- data.frame(
+    x = as.numeric(sf::st_coordinates(center)[1,1]), y = as.numeric(sf::st_coordinates(center)[1,2]),
+    class = factor(c("Omission", "Commission", "Matched", "Ground truth", "Outside plot"),
+                   levels = c("Omission", "Commission", "Matched", "Ground truth", "Outside plot"))
+  )
+
+  crs = sf::st_crs(inventory)
+
+  # Generate ggplot
+  ggplot2::ggplot() +
+    ggplot2::geom_sf(data = sf::st_buffer(treemap$center, 11.28), fill = NA, color = "red") +
+    ggplot2::geom_sf(data = sf::st_buffer(treemap$center, 4), fill = NA, color = "blue") +
+    ggplot2::geom_sf(data = treemap$center, shape = 3, size = 3, color = "red") +
+    ggplot2::geom_sf(data = shapes_inventory, fill = shapes_inventory$color) +
+    ggplot2::geom_text(data = coords_inv_df, ggplot2::aes(x = X + 0.2, y = Y + 0.2, label = label), size = 2) +
+    ggplot2::geom_sf(data = shapes_measure, fill = shapes_measure$color, alpha = 0.8) +
+    ggplot2::geom_text(data = coords_mea_df, ggplot2::aes(x = X - 0.2, y = Y - 0.2, label = label), size = 2) +
+    ggplot2::geom_sf(data = sf_lines, color = "green") +
+    ggplot2::theme_minimal() +
+    ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "gray95")) +
+    ggplot2::geom_point(data = legend_df, ggplot2::aes(x = x, y = y, fill = class), shape = 21, size = 2) +
+    ggplot2::coord_sf(datum = crs) +
+    ggplot2::xlab("") +
+    ggplot2::ylab("") +
+    ggplot2::scale_fill_manual(
+      name = NULL,
+      values = c(
+        "Omission" = "orange",
+        "Commission" = "red",
+        "Matched" = "darkgreen",
+        "Ground truth" = "black",
+        "Outside plot" = "gray"
+      )
+    ) +
+    ggplot2::theme(
+      legend.position = c(0.02, 0.98),              # Position: top-left in normalized coordinates
+      legend.justification = c("left", "top"),      # Anchor corner of the legend box
+      legend.background = ggplot2::element_rect(    # White background box with black border
+        fill = "white",
+        color = "black",
+        linewidth = 0.2
+      ),
+      legend.key = ggplot2::element_rect(           # Optional: clean keys
+        fill = "white",
+        color = NA
+      ),
+      legend.title = ggplot2::element_text(size = 10),
+      legend.text = ggplot2::element_text(size = 9),
+      legend.key.size = ggplot2::unit(1, "lines")
+    )
 }
 
 pan3d = function(button, dev = rgl::cur3d(), subscene = rgl::currentSubscene3d(dev))

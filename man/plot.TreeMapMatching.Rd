@@ -4,7 +4,7 @@
 \alias{plot.TreeMapMatching}
 \title{Plot a TreeMapMatching object}
 \usage{
-\method{plot}{TreeMapMatching}(x, y, scale = 1, rgl = FALSE, ...)
+\method{plot}{TreeMapMatching}(x, y, scale = 1, rgl = FALSE, gg = FALSE, ...)
 }
 \arguments{
 \item{x}{TreeMapMatching object}
@@ -13,7 +13,9 @@
 
 \item{scale}{upscale tree diameters for a better readability of the plot}
 
-\item{rgl}{bool plot in 3D with rgl}
+\item{rgl}{bool. plot in 3D with rgl}
+
+\item{gg}{bool. Plot with ggplot instead of base R graphic system}
 
 \item{...}{not used}
 }
