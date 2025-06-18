@@ -29,7 +29,7 @@ treemap <- match_trees(treemap, method = lasap_matching, dmax = 2, dz = 0.1)
 plot(treemap, scale = 2)
 plot(treemap, rgl = TRUE)
 
-treemap$matching_table
+treemap$match_table
 ```
 
 ![](man/figures/PRF025.png)
