@@ -149,9 +149,9 @@ compare_plot3d = function(treemap)
   inventory = treemap$inventory
   measure = treemap$measured
 
+  xyz = sf::st_coordinates(inventory) |> as.data.frame()
   offsetx = mean(xyz[,1])
   offsety = mean(xyz[,2])
-  xyz = sf::st_coordinates(inventory) |> as.data.frame()
   xyz[,1] = xyz[,1] - offsetx
   xyz[,2] = xyz[,2] - offsety
   xyz$Z = inventory$DBH*factor
