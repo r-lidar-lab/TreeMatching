@@ -187,25 +187,29 @@ plot_spatial_matching = function(treemap, scale = 1)
   color[matched$index_inventory] = "black"
   shapes = sf::st_buffer(inventory, inventory$DBH/2*scale)
   plot(sf::st_geometry(shapes), add = T, col = color, border = color)
-  graphics::text(sf::st_coordinates(inventory)+0.15, labels = 1:nrow(inventory), cex = 0.5)
+  graphics::text(sf::st_coordinates(inventory)+0.15, labels = 1:nrow(inventory), cex = 0.5, col = color)
 
   shapes = sf::st_buffer(measure, measure$DBH/2*scale)
   color = rep("red", nrow(measure))
   color[!inside] = "gray"
   color[matched$index_measure] = "darkgreen"
   plot(sf::st_geometry(shapes), add = T, col =  color, border = color)
-  graphics::text(sf::st_coordinates(measure)-0.15, labels = 1:nrow(measure), cex = 0.5)
+  graphics::text(sf::st_coordinates(measure)-0.15, labels = 1:nrow(measure), cex = 0.5, col = color)
 
   coord_inventory = sf::st_coordinates(inventory)
   coord_measure = sf::st_coordinates(measure)
   coord_inventory = coord_inventory[matched$index_inventory,]
   coord_measure = coord_measure[matched$index_measure,]
+  cost = matched$cost
 
   make_line <- function(p1, p2) { sf::st_linestring(rbind(p1, p2))}
   lines <- mapply(make_line, split(coord_inventory, row(coord_inventory)[,1]), split(coord_measure, row(coord_measure)[,1]), SIMPLIFY = FALSE)
   sf_lines <- sf::st_sf(geometry = sf::st_sfc(lines, crs = 32633))  # Adjust CRS as needed
 
   plot(sf_lines, add = T, col = "green")
+
+  line_center = sf::st_centroid(sf_lines)
+  graphics::text(sf::st_coordinates(line_center)-0.15, labels = round(cost,1), cex = 0.5, col = "blue")
 
   graphics::legend(x = "topleft",
                    legend=c("Omission", "Commision", "Matched", "Ground truth", "Outside plot"),

@@ -300,6 +300,7 @@ bidirectionnal_double_matching <- function(treemap, dmax = 2, dz = 0.1)
 #' @md
 lsap_matching = function(treemap, dmax = 2, dz = 0.1, unmatch_cost = "auto")
 {
+  inf = 9999999
 
   measured = treemap$measured
   inventory = treemap$inventory
@@ -312,19 +313,21 @@ lsap_matching = function(treemap, dmax = 2, dz = 0.1, unmatch_cost = "auto")
     cat("unmatch_cost =", unmatch_cost, "\n")
   }
 
+  # Excessive cost for trees beyond the limit of the plot prevents
+  # matching
   d = as.numeric(sf::st_distance(measured, treemap$center))
   inside = d < treemap$radius
-  measured$DBH[!inside] = 99999 # They will never match
+  measured$DBH[!inside] = inf
 
-  # Extract 2D coordinates and add a synthetic Z dimension from DBH
-  coords_inventory <- sf::st_coordinates(treemap$inventory)
-  coords_measure   <- sf::st_coordinates(measured)
-
+  # Extract coordinates and add a synthetic Z dimension from DBH
   coords_inventory_1d = treemap$inventory$DBH * factor
   coords_measure_1d = treemap$measured$DBH *factor
 
-  coords_inventory_3d <- cbind(coords_inventory, treemap$inventory$DBH * factor)
-  coords_measure_3d   <- cbind(coords_measure,   treemap$measured$DBH   * factor)
+  coords_inventory_2d <- sf::st_coordinates(treemap$inventory)
+  coords_measure_2d   <- sf::st_coordinates(measured)
+
+  coords_inventory_3d <- cbind(coords_inventory_2d, coords_inventory_1d)
+  coords_measure_3d   <- cbind(coords_measure_2d,   coords_measure_1d)
 
   dist_matrix <- function(A, B)
   {
@@ -335,23 +338,39 @@ lsap_matching = function(treemap, dmax = 2, dz = 0.1, unmatch_cost = "auto")
     sqrt(pmax(d2, 0))  # Ensure no negative values due to floating point
   }
 
-  x1 = dist_matrix(cbind(0, coords_inventory_1d), cbind(0, coords_measure_1d))
-  x2 = dist_matrix(coords_inventory, coords_measure)
-  x3 = dist_matrix(coords_inventory_3d, coords_measure_3d)
+  # 1D 2D and 3D distance matrices
+  # 1D allows to remove connections between trees that have a too big difference in Z (DBH)
+  # 2D allows to remove connection between trees that have a too big difference in distance
+  # 3D is solved as Linear Sum Assignment Problem this is the cost of assignment
+  d1 = dist_matrix(cbind(0, coords_inventory_1d), cbind(0, coords_measure_1d))
+  d2 = dist_matrix(coords_inventory_2d, coords_measure_2d)
+  d3 = dist_matrix(coords_inventory_3d, coords_measure_3d)
 
-  unmatch = matrix(unmatch_cost, ncol = ncol(x3), nrow = nrow(x3))
-  x3 = cbind(x3, unmatch)
+  # We add an excessive cost for un matchable pair (too far, too big)
+  #d3[d2 > dmax] = inf
+  #d3[d1 > dz * factor] = inf
 
-  y <- clue::solve_LSAP(x3)
-  y
+  # We may have different number of trees to match in each dataset. LSAP is a one-to-one assignment
+  # solution and does not have the capability to not match entries. Here we are adding as many placeholder
+  # entries as there are trees. Thus each tree can either be matched to another tree or be matched to
+  # a placeholder representing a non match. The cost of the placeholder must be carefully chosen. It
+  # must be cheaper than a bad match, but more expensive than a good match.
+  unmatch = matrix(unmatch_cost, ncol = ncol(d3), nrow = nrow(d3))
+  d3 = cbind(d3, unmatch)
+
+  # Now we can solve optimal assignment
+  y <- clue::solve_LSAP(d3)
 
   match_table = cbind(seq_along(y), y)
+
+  # We remove all placeholder assignments
   rm = match_table[,1] > nrow(inventory) |  match_table[,2] > nrow(measured)
   match_table = match_table[!rm,]
 
-  cost1 = x1[match_table]
-  cost2 = x2[match_table]
-
+  # We check the 1d and 2d costs to remove invalid assignments
+  cost1 = d1[match_table]
+  cost2 = d2[match_table]
+  cost3 = d3[match_table]
   invalid2 = which(cost2 > dmax)
   invalid1 = which(cost1 > dz * factor)
   invalid = c(invalid1, invalid2)
@@ -359,6 +378,7 @@ lsap_matching = function(treemap, dmax = 2, dz = 0.1, unmatch_cost = "auto")
   match_table =  data.table::as.data.table(match_table)
   names(match_table) = c("index_inventory", "index_measure")
   match_table$index_inventory[invalid] = NA
+  match_table$cost = cost3
 
   return(match_table)
 }

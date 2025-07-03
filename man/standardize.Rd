@@ -15,7 +15,8 @@ standardize(data, xname, yname, dbhname, dbhunits = "cm", crs = sf::NA_crs_)
 
 \item{dbhname}{Name of the column containing DBH (Diameter at Breast Height) values.}
 
-\item{dbhunits}{Unit of the DBH values. Either `"cm"` (default) or `"m"`.}
+\item{dbhunits}{Unit of the DBH values. Either `"cm"` (default) or `"m"`. If "cm" the value will
+be converted to meters.}
 
 \item{crs}{Coordinate Reference System to assign to the output geometry (as a `sf::st_crs()` object).}
 }
@@ -23,7 +24,7 @@ standardize(data, xname, yname, dbhname, dbhunits = "cm", crs = sf::NA_crs_)
 An `sf` object with:
 \itemize{
   \item Geometry from the X and Y columns.
-  \item A renamed column `DBH` in centimeters.
+  \item A renamed column `DBH` in meters
   \item CRS set as specified.
   \item An attribute `"standardized" = TRUE`.
   \item Class modified to include `"TreeMap"`.
@@ -48,6 +49,7 @@ tree_map <- standardize(
   xname = "Field_X",
   yname = "Field_Y",
   dbhname = "DBH",
+  dbhunits = "cm"
   crs = 2959)
 }
 \seealso{

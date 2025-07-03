@@ -9,13 +9,14 @@
 #' @param xname Name of the column containing X coordinates.
 #' @param yname Name of the column containing Y coordinates.
 #' @param dbhname Name of the column containing DBH (Diameter at Breast Height) values.
-#' @param dbhunits Unit of the DBH values. Either `"cm"` (default) or `"m"`.
+#' @param dbhunits Unit of the DBH values. Either `"cm"` (default) or `"m"`. If "cm" the value will
+#' be converted to meters.
 #' @param crs Coordinate Reference System to assign to the output geometry (as a `sf::st_crs()` object).
 #'
 #' @return An `sf` object with:
 #' \itemize{
 #'   \item Geometry from the X and Y columns.
-#'   \item A renamed column `DBH` in centimeters.
+#'   \item A renamed column `DBH` in meters
 #'   \item CRS set as specified.
 #'   \item An attribute `"standardized" = TRUE`.
 #'   \item Class modified to include `"TreeMap"`.
@@ -34,6 +35,7 @@
 #'   xname = "Field_X",
 #'   yname = "Field_Y",
 #'   dbhname = "DBH",
+#'   dbhunits = "cm"
 #'   crs = 2959)
 #' @seealso \code{\link[sf]{st_as_sf}}, \code{\link[sf]{st_crs}}, \code{\link[dplyr]{rename_with}}
 #' @export
@@ -42,7 +44,7 @@ standardize = function(data, xname, yname, dbhname, dbhunits = "cm", crs = sf::N
   match.arg(dbhunits, c("m", "cm"))
   data = sf::st_as_sf(data, coords = c(xname, yname))
   names(data)[names(data) == dbhname] <- "DBH"
-  if (dbhunits == "m") data$DBH = data$DBH/100
+  if (dbhunits == "cm") data$DBH = data$DBH/100
   sf::st_crs(data) = crs
   attr(data, "standardized") = TRUE
   class(data) = c("TreeMap", class(data))

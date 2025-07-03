@@ -15,8 +15,8 @@ inventory = inventory[!duplicated(inventory),]
 fmeasure = file.path("/home/jr/Téléchargements/ALS_TLS_GJ/Bastien/Matching_MLS_FI/MLS/", paste0(plot_id, "_DBH_HTs.csv"))
 measure <- read.csv(fmeasure)
 
-inventory = standardize(inventory, "Field_Xpj", "Field_Ypj", "DBH", dbhunits = "m", crs = 2959)
-measure   = standardize(measure, "X", "Y", "DBH", dbhunits = "cm", crs = 2959)
+inventory = standardize(inventory, "Field_Xpj", "Field_Ypj", "DBH", dbhunits = "cm", crs = 2959)
+measure   = standardize(measure, "X", "Y", "DBH", dbhunits = "m", crs = 2959)
 center    = c(inventory$Easting[1], inventory$Northing[1])
 
 treemap = make_mapmatching(inventory, measure, center = center, radius = 11.5)
@@ -28,7 +28,11 @@ plot(treemap, scale = 2)
 plot(treemap, scale = 2, rgl = TRUE)
 plot(treemap, scale = 2, gg = TRUE)
 
-treemap = match_trees(treemap, lsap_matching, dmax = 2, dz = 0.3, unmatch_cost = 6)
+treemap = match_trees(treemap, lsap_matching, dmax = 2, dz = 0.3, unmatch_cost = 3.6)
 plot(treemap, scale = 2)
 plot(treemap, scale = 2, rgl = TRUE)
 
+matched = treemap$match_table[!is.na(treemap$match_table$index_inventory),]
+hist(matched$cost, breaks = 15)
+q = quantile(matched$cost, probs = 0.95)
+abline(v = q, col = "red", lty = 3)
