@@ -9,8 +9,8 @@ Matching trees between different surveys (e.g., lidar-derived and field-measured
 
 The current version includes two matching strategies:
 
+- Linear Sum Assignment Problem solving (Hungarian method) (**prefered method**)
 - Bidirectional 2-nearest-neighbors 3D matching  
-- Linear Sum Assignment Problem solving (Hungarian method)
 
 ## Example
 
@@ -30,16 +30,10 @@ plot(treemap, scale = 2)
 plot(treemap, rgl = TRUE)
 
 treemap$match_table
-
-treemap <- match_trees(treemap, method = bidirectionnal_double_matching, dxymax = 2, dzmax = 0.1)
-
-plot(treemap, scale = 2)
-plot(treemap, rgl = TRUE)
 ```
 
-![](man/figures/PRF025.png)
 
-![](man/figures/PRF200.png)
+![](man/figures/PRF025.png)
 
 ## Installation
 
