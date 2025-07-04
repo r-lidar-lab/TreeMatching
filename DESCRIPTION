@@ -11,14 +11,19 @@ Encoding: UTF-8
 LazyData: true
 Imports: 
     clue,
+    grDevices,
+    stats,
     graphics,
     data.table,
-    methods,
     sf,
     RANN,
     rgl
 Suggests: 
-  ggplot2
+    ggplot2,
+    knitr,
+    rmarkdown,
+    shiny
 RoxygenNote: 7.3.2
 Depends: 
-    R (>= 3.5)
+    R (>= 4.1.0)
+VignetteBuilder: knitr

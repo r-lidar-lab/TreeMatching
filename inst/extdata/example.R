@@ -3,9 +3,9 @@ plot_id = "PRF025"
 plot_id = "PRF036"
 plot_id = "PRF133"
 plot_id = "PRF184"
-plot_id = "PRF185" #weird
+plot_id = "PRF185"
 plot_id = "PRF193"
-plot_id = "PRF200" # weird
+plot_id = "PRF200"
 
 finventory = "/home/jr/Téléchargements/ALS_TLS_GJ/Bastien/Matching_MLS_FI/FI/FieldData_2025_Aligned_UTM.csv"
 all_inventory <- read.csv(finventory)
@@ -23,16 +23,16 @@ treemap = make_mapmatching(inventory, measure, center = center, radius = 11.5)
 
 plot(treemap, scale = 2)
 
+treemap = match_trees(treemap, lsap_matching, dxymax = 2, dzmax = 0.3, zrel = 40)
+plot(treemap, scale = 2)
+plot(treemap, rgl = TRUE)
+
 treemap = match_trees(treemap, bidirectionnal_double_matching, dmax = 2, dz = 0.3)
 plot(treemap, scale = 2)
 plot(treemap, scale = 2, rgl = TRUE)
-plot(treemap, scale = 2, gg = TRUE)
+plot(treemap, gg = TRUE)
 
-treemap = match_trees(treemap, lsap_matching, dmax = 2, dz = 0.3, unmatch_cost = 3.6)
-plot(treemap, scale = 2)
-plot(treemap, scale = 2, rgl = TRUE)
 
-matched = treemap$match_table[!is.na(treemap$match_table$index_inventory),]
-hist(matched$cost, breaks = 15)
-q = quantile(matched$cost, probs = 0.95)
-abline(v = q, col = "red", lty = 3)
+guess_unmatch_cost(treemap, 2, 0.3, 50, plot = TRUE)
+
+

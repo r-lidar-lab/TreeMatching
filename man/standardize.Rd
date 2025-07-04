@@ -46,10 +46,10 @@ functions that expect standardized input.
 data(PRF025_Field)
 tree_map <- standardize(
   PRF025_Field,
-  xname = "Field_X",
-  yname = "Field_Y",
+  xname = "Field_Xpj",
+  yname = "Field_Ypj",
   dbhname = "DBH",
-  dbhunits = "cm"
+  dbhunits = "cm",
   crs = 2959)
 }
 \seealso{

@@ -2,6 +2,8 @@
 
 S3method(plot,TreeMapMatching)
 export(bidirectionnal_double_matching)
+export(guess_unmatch_cost)
+export(lsap_app)
 export(lsap_matching)
 export(make_mapmatching)
 export(match_trees)

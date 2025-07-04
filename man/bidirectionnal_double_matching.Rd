@@ -4,15 +4,15 @@
 \alias{bidirectionnal_double_matching}
 \title{Match Trees Between Measured and Inventory Maps Using 3D 2-Nearest Neighbors}
 \usage{
-bidirectionnal_double_matching(treemap, dmax = 2, dz = 0.1)
+bidirectionnal_double_matching(treemap, dxymax = 2, dzmax = 0.1)
 }
 \arguments{
 \item{treemap}{A `TreeMapMatching` object created with [make_mapmatching()], containing the `inventory`,
 `measured`, `center`, and `radius`.}
 
-\item{dmax}{Maximum allowed horizontal (XY) distance for matching. Default is 2.}
+\item{dxymax}{Maximum allowed horizontal (XY) distance for matching. Default is 2.}
 
-\item{dz}{Maximum allowed vertical (Z/DBH) difference. Default is 0.1.}
+\item{dzmax}{Maximum allowed vertical (Z/DBH) difference. Default is 0.1.}
 }
 \value{
 A `data.table` with two columns:
@@ -27,7 +27,7 @@ It is bidirectional because it performs an inventory to measure matching and a m
 inventory matching. It used 2-nearest-neighbors instead of 1-nearest-neighbors to give a chance to
 each tree to get matched twice so each tree as a fall back matching reducing probabilities of collision
 and therefore ommission and commission between from trees that would be matched to the same reference
-using a 1-nn approache.\cr\cr
+using a 1-nn approach.\cr\cr
 It uses a scaled 3D distance (based on X, Y, and DBH as a proxy for Z) to identify the best match
 for each tree in both directions. The final match is the most consistent and closest association
 between the two sets.
@@ -40,8 +40,8 @@ The algorithm works in two passes:
         (diameter at breast height), scaled to be comparable with X and Y.
   \item From inventory to measured: the same process is repeated in reverse.
 }
-For both passes, only matches within a maximum distance (`dmax`) in the X/Y plane and a maximum DBH
-difference (`dz`) are retained. Each inventory tree can only be assigned to one measured tree
+For both passes, only matches within a maximum distance (`dxymax`) in the X/Y plane and a maximum DBH
+difference (`dzmax`) are retained. Each inventory tree can only be assigned to one measured tree
 (and vice versa), to prevent duplicates.\cr\cr
 If a tree has two possible matches (one in each direction), the closest in full 3D distance is chosen.
 In case of ambiguous matches (i.e., multiple measured trees selecting the same inventory tree), the

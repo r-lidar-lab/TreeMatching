@@ -5,7 +5,7 @@
 #' inventory matching. It used 2-nearest-neighbors instead of 1-nearest-neighbors to give a chance to
 #' each tree to get matched twice so each tree as a fall back matching reducing probabilities of collision
 #' and therefore ommission and commission between from trees that would be matched to the same reference
-#' using a 1-nn approache.\cr\cr
+#' using a 1-nn approach.\cr\cr
 #' It uses a scaled 3D distance (based on X, Y, and DBH as a proxy for Z) to identify the best match
 #' for each tree in both directions. The final match is the most consistent and closest association
 #' between the two sets.
@@ -18,8 +18,8 @@
 #'         (diameter at breast height), scaled to be comparable with X and Y.
 #'   \item From inventory to measured: the same process is repeated in reverse.
 #' }
-#' For both passes, only matches within a maximum distance (`dmax`) in the X/Y plane and a maximum DBH
-#' difference (`dz`) are retained. Each inventory tree can only be assigned to one measured tree
+#' For both passes, only matches within a maximum distance (`dxymax`) in the X/Y plane and a maximum DBH
+#' difference (`dzmax`) are retained. Each inventory tree can only be assigned to one measured tree
 #' (and vice versa), to prevent duplicates.\cr\cr
 #' If a tree has two possible matches (one in each direction), the closest in full 3D distance is chosen.
 #' In case of ambiguous matches (i.e., multiple measured trees selecting the same inventory tree), the
@@ -30,8 +30,8 @@
 #'
 #' @param treemap A `TreeMapMatching` object created with [make_mapmatching()], containing the `inventory`,
 #' `measured`, `center`, and `radius`.
-#' @param dmax Maximum allowed horizontal (XY) distance for matching. Default is 2.
-#' @param dz Maximum allowed vertical (Z/DBH) difference. Default is 0.1.
+#' @param dxymax Maximum allowed horizontal (XY) distance for matching. Default is 2.
+#' @param dzmax Maximum allowed vertical (Z/DBH) difference. Default is 0.1.
 #'
 #' @return A `data.table` with two columns:
 #' \describe{
@@ -41,7 +41,7 @@
 #'
 #' @importFrom data.table :=
 #' @export
-bidirectionnal_double_matching <- function(treemap, dmax = 2, dz = 0.1)
+bidirectionnal_double_matching <- function(treemap, dxymax = 2, dzmax = 0.1)
 {
   . <- dist1 <- dist2 <- index_inv1 <- index_inv2 <- .I <- index_measure <- index_inventory <- matched_index <- distance <- NULL
   stopifnot(inherits(treemap$measured, "sf"))
@@ -59,7 +59,7 @@ bidirectionnal_double_matching <- function(treemap, dmax = 2, dz = 0.1)
 
   coords_inventory_3d <- cbind(coords_inventory, treemap$inventory$DBH * factor)
   coords_measure_3d   <- cbind(coords_measure,   treemap$measured$DBH   * factor)
-  dz = dz * factor
+  dzmax = dzmax * factor
 
   # Extract X, Y, Z for fast access
   x_inv <- coords_inventory_3d[, 1]
@@ -70,7 +70,7 @@ bidirectionnal_double_matching <- function(treemap, dmax = 2, dz = 0.1)
   y_meas <- coords_measure_3d[, 2]
   z_meas <- coords_measure_3d[, 3]
 
-  # === match mls with field ======
+  # match mls with field
 
   # Build KD-tree on inventory and get two nearest neighbors for each measured tree
   knn  <- RANN::nn2(coords_inventory_3d, coords_measure_3d, k = 2L)
@@ -88,16 +88,16 @@ bidirectionnal_double_matching <- function(treemap, dmax = 2, dz = 0.1)
   match_table$dist2 <- sqrt((x_inv[second_nn] - x_meas)^2 +  (y_inv[second_nn] - y_meas)^2)
 
   # Discard too-distant neighbors
-  match_table[dist1 > dmax, index_inv1 := NA_integer_]
-  match_table[dist2 > dmax, index_inv2 := NA_integer_]
+  match_table[dist1 > dxymax, index_inv1 := NA_integer_]
+  match_table[dist2 > dxymax, index_inv2 := NA_integer_]
 
   # Compute Z distances to the first and second neighbor
   match_table$dist1 <- abs(z_inv[first_nn]  - z_meas)
   match_table$dist2 <- abs(z_inv[second_nn] - z_meas)
 
   # Discard too-distant neighbors
-  match_table[dist1 > dz, index_inv1 := NA_integer_]
-  match_table[dist2 > dz, index_inv2 := NA_integer_]
+  match_table[dist1 > dzmax, index_inv1 := NA_integer_]
+  match_table[dist2 > dzmax, index_inv2 := NA_integer_]
 
   # Compute 3D distances to the first and second neighbor
   match_table$dist1 <- sqrt((x_inv[first_nn]  - x_meas)^2 +  (y_inv[first_nn]  - y_meas)^2 + (z_inv[first_nn]  - z_meas)^2)
@@ -127,7 +127,7 @@ bidirectionnal_double_matching <- function(treemap, dmax = 2, dz = 0.1)
 
   match_table1 = match_table[, .(index_measure, index_inventory)]
 
-  # === match field with mls ======
+  # match field with mls
 
   tmp = coords_inventory_3d
   coords_inventory_3d = coords_measure_3d
@@ -158,16 +158,16 @@ bidirectionnal_double_matching <- function(treemap, dmax = 2, dz = 0.1)
   match_table$dist2 <- sqrt((x_inv[second_nn] - x_meas)^2 +  (y_inv[second_nn] - y_meas)^2)
 
   # Discard too-distant neighbors
-  match_table[dist1 > dmax, index_inv1 := NA_integer_]
-  match_table[dist2 > dmax, index_inv2 := NA_integer_]
+  match_table[dist1 > dxymax, index_inv1 := NA_integer_]
+  match_table[dist2 > dxymax, index_inv2 := NA_integer_]
 
   # Compute Z distances to the first and second neighbor
   match_table$dist1 <- abs(z_inv[first_nn]  - z_meas)
   match_table$dist2 <- abs(z_inv[second_nn] - z_meas)
 
   # Discard too-distant neighbors
-  match_table[dist1 > dz, index_inv1 := NA_integer_]
-  match_table[dist2 > dz, index_inv2 := NA_integer_]
+  match_table[dist1 > dzmax, index_inv1 := NA_integer_]
+  match_table[dist2 > dzmax, index_inv2 := NA_integer_]
 
   # Compute 3D distances to the first and second neighbor
   match_table$dist1 <- sqrt((x_inv[first_nn]  - x_meas)^2 +  (y_inv[first_nn]  - y_meas)^2 + (z_inv[first_nn]  - z_meas)^2)
@@ -258,58 +258,63 @@ bidirectionnal_double_matching <- function(treemap, dmax = 2, dz = 0.1)
   return(match_table)
 }
 
-#' Match measured and inventory trees using the LSAP algorithm
+#' Match measured and inventory trees solving LSAP
 #'
-#' This function matches trees from a measured dataset to trees in an inventory dataset
-#' by solving a Linear Sum Assignment Problem (LSAP) in 3D space. The third dimension
-#' is synthetically created using the DBH (Diameter at Breast Height) to improve matching accuracy.
-#' Unmatched points are assigned to a dummy column with a fixed cost, allowing partial matching.
+#' Matches trees from a LiDAR-derived dataset (e.g., ALS or TLS) to trees from a field inventory
+#' by solving a Linear Sum Assignment Problem (LSAP) in 3D space. The third dimension (Z)
+#' is artificially constructed from DBH or tree height to improve the accuracy of positional matching.
+#' To allow partial matching (i.e., unmatched trees), dummy trees are added with a fixed cost
+#' (`unmatch_cost`). This prevents the algorithm from forcing poor matches.
 #'
-#' @param treemap A TreeMapMatching object. See \link{make_mapmatching}
-#' @param dmax Maximum allowed 2D distance (in projection units) to consider a match valid.
-#' @param dz Maximum allowed Z (DBH or height) difference to consider a match valid.
-#' @param unmatch_cost See details.
+#' @param treemap A `TreeMapMatching` object. See \link{make_mapmatching}.
+#' @param dxymax Maximum allowed 2D (XY) distance (in projection units) for a valid match.
+#' @param dzmax Maximum allowed Z difference (e.g., DBH or height, in meters) for a valid match.
+#' @param zrel Relative importance of the Z dimension compared to XY. Since Z and XY units differ,
+#'   Z is scaled to be comparable. A value of 0 means Z is ignored; a value of 1 gives Z and XY equal weight.
+#'   Default is 0.5 (i.e., 50% of XY weight).
+#' @param unmatch_cost Fixed cost of assigning a tree to a dummy (i.e., unmatched). See Details.
 #'
-#' @return A `data.table` with columns:
-#'   \describe{
-#'     \item{\code{index_measure}}{The index of the matched measured tree.}
-#'     \item{\code{index_inventory}}{The index of the matched inventory tree, or `NA` if unmatched.}
-#'   }
-#' Only valid matches within distance thresholds are retained. Invalid matches are assigned `NA`.
+#' @return A `data.table` with the following columns:
+#' \describe{
+#'   \item{\code{index_measure}}{Index of the matched tree in the measured (LiDAR) dataset.}
+#'   \item{\code{index_inventory}}{Index of the matched tree in the inventory dataset, or `NA` if unmatched.}
+#' }
+#' Only matches that satisfy the distance thresholds are returned. Invalid matches are marked as `NA`.
 #'
 #' @details
-#' This function matches trees based on their 3D positions. Since actual tree height is often unavailable,
-#' the DBH (Diameter at Breast Height) is used to simulate a third dimension (Z) that helps distinguish
-#' trees that may be close in 2D but differ in size. DBH values are scaled to be comparable
-#' to spatial coordinates (X, Y), and distances are computed in this 3D space.\cr\cr
-#' The matching is performed using the LSAP (Linear Sum Assignment Problem) algorithm
-#' (\link[clue:solve_LSAP]{solve_LSAP}), which finds the best one-to-one pairings between trees
-#' in the measured and inventory datasets by minimizing the total distance.\cr\cr
-#' However, by design, the LSAP algorithm always attempts to match all items, even when no suitable match exists.
-#' To avoid forcing poor matches, "dummy matches" are added to the cost matrix. These dummy matches represent
-#' the option for a measured tree to remain unmatched, with a fixed cost (`unmatch_cost`).\cr\cr
-#' If the cost of a match exceeds this fixed cost, the algorithm will prefer the dummy option.
-#' After solving, these unmatched trees are identified and marked as `NA` in the result.\cr\cr
-#' Choosing an appropriate `unmatch_cost` is nontrivial. It should be higher than the cost of a good match
-#' to encourage valid pairings, but lower than the cost of a bad match to penalize poor assignments.
-#' When `unmatch_cost = "auto"`, the algorithm prints the automatically determined value.
-#' Users can then adjust this value to fine-tune the matching behavior.
-
-#' @seealso \code{\link[clue]{solve_LSAP}} \code{\link{make_mapmatching}}
+#' This function computes a matching between trees in a 3D space, where Z is not an actual height
+#' but a synthetic dimension created from DBH (or tree height). The goal is to improve discrimination
+#' between nearby trees of different sizes. Because DBH and spatial coordinates (XY) are not directly
+#' comparable, the Z dimension is scaled using the `zrel` parameter.\cr\cr
+#' Matching is performed solving LSAP using Hungarian algorithm via \link[clue:solve_LSAP]{solve_LSAP},
+#' which finds the lowest-cost one-to-one pairings. However, LSAP matches all items by default,
+#' even when no good match exists. To avoid poor assignments, dummy trees are introduced in the cost
+#' matrix with a fixed cost (`unmatch_cost`).\cr\cr'
+#' If the cost of a match exceeds `unmatch_cost`, the algorithm prefers leaving the tree unmatched.
+#' These unmatched entries are then returned with `index_inventory = NA`.\cr\cr
+#' Choosing a good value for `unmatch_cost` is important:
+#' \itemize{
+#'   \item It must be **higher than the cost of a good match**, to allow valid pairings.
+#'   \item It must be **lower than the cost of a bad match**, to avoid forced poor pairings.
+#' }
+#' When `unmatch_cost = "auto"`, a simple heuristic is used to estimate a reasonable value,
+#' which is printed to the console. Users can refine this value manually if needed.
+#'
+#' @seealso \link[clue]{solve_LSAP}, \link{make_mapmatching}, \link{match_trees}
 #' @export
 #' @md
-lsap_matching = function(treemap, dmax = 2, dz = 0.1, unmatch_cost = "auto")
+lsap_matching = function(treemap, dxymax = 2, dzmax = 0.1, zrel = 40, unmatch_cost = "auto")
 {
   inf = 9999999
 
   measured = treemap$measured
   inventory = treemap$inventory
 
-  factor = scale_z_factor(treemap$radius, inventory$DBH)
+  factor = scale_z_factor(treemap$radius, inventory$DBH, zrel/100)
 
-  if (is.character(unmatch_cost))
+  if (!is.numeric(unmatch_cost))
   {
-    unmatch_cost = dmax + dz * factor * 0.5
+    unmatch_cost = guess_unmatch_cost(treemap, dxymax, dzmax, zrel)
     cat("unmatch_cost =", unmatch_cost, "\n")
   }
 
@@ -347,8 +352,8 @@ lsap_matching = function(treemap, dmax = 2, dz = 0.1, unmatch_cost = "auto")
   d3 = dist_matrix(coords_inventory_3d, coords_measure_3d)
 
   # We add an excessive cost for un matchable pair (too far, too big)
-  #d3[d2 > dmax] = inf
-  #d3[d1 > dz * factor] = inf
+  d3[d2 > dxymax] = inf
+  d3[d1 > dzmax * factor] = inf
 
   # We may have different number of trees to match in each dataset. LSAP is a one-to-one assignment
   # solution and does not have the capability to not match entries. Here we are adding as many placeholder
@@ -371,21 +376,53 @@ lsap_matching = function(treemap, dmax = 2, dz = 0.1, unmatch_cost = "auto")
   cost1 = d1[match_table]
   cost2 = d2[match_table]
   cost3 = d3[match_table]
-  invalid2 = which(cost2 > dmax)
-  invalid1 = which(cost1 > dz * factor)
+  invalid2 = which(cost2 > dxymax)
+  invalid1 = which(cost1 > dzmax * factor)
   invalid = c(invalid1, invalid2)
 
   match_table =  data.table::as.data.table(match_table)
-  names(match_table) = c("index_inventory", "index_measure")
-  match_table$index_inventory[invalid] = NA
   match_table$cost = cost3
+  names(match_table) = c("index_inventory", "index_measure", "cost")
+  #match_table$index_inventory[invalid] = NA
+
+  attr(match_table, "zrel") = zrel
 
   return(match_table)
 }
 
-scale_z_factor = function(radius, z)
+scale_z_factor = function(radius, z, zrel = 1)
 {
   r = range(z)
-  r = r-r[1]
-  return((2*radius)/r[2])
+  r = r[2]-r[1]
+  return(zrel*(2*radius)/r)
+}
+
+#' @rdname lsap_matching
+#' @param ... unused
+#' @export
+guess_unmatch_cost = function(treemap, dxymax, dzmax, zrel, ...)
+{
+  p = list(...)
+  factor = scale_z_factor(treemap$radius, treemap$inventory$DBH, zrel/100)
+  unmatch_cost = dxymax + dzmax * factor * 0.5
+  matched = lsap_matching(treemap, dxymax, dzmax, zrel, unmatch_cost)
+  q = stats::quantile(matched$cost, probs = 0.95)
+  res = as.numeric(round(q+0.5,2))
+
+  if (!is.null(p$plot))
+  {
+    matched = matched[!is.na(matched$index_inventory),]
+    h = graphics::hist(
+      matched$cost,
+      freq = FALSE,
+      probability = TRUE,
+      breaks = seq(0, max(matched$cost+0.5), length.out = 20),
+      xlab = "Cost",
+      main = "Histogram of costs with automatic unmatch_cost")
+    graphics::abline(v = res, col = "red", lty = 3)
+    z = max(h$density)
+    graphics::text(res -0.2, z, label = "Suggested value", col = "red")
+  }
+
+  return(res)
 }

@@ -32,10 +32,10 @@
 #' data(PRF025_Field)
 #' tree_map <- standardize(
 #'   PRF025_Field,
-#'   xname = "Field_X",
-#'   yname = "Field_Y",
+#'   xname = "Field_Xpj",
+#'   yname = "Field_Ypj",
 #'   dbhname = "DBH",
-#'   dbhunits = "cm"
+#'   dbhunits = "cm",
 #'   crs = 2959)
 #' @seealso \code{\link[sf]{st_as_sf}}, \code{\link[sf]{st_crs}}, \code{\link[dplyr]{rename_with}}
 #' @export
@@ -47,15 +47,11 @@ standardize = function(data, xname, yname, dbhname, dbhunits = "cm", crs = sf::N
   if (dbhunits == "cm") data$DBH = data$DBH/100
   sf::st_crs(data) = crs
   attr(data, "standardized") = TRUE
-  class(data) = c("TreeMap", class(data))
   data
 }
 
 is_standardized = function(x)
 {
-  if (!methods::is(x, "TreeMap"))
-    stop("Input data is not of class TreeMap")
-
   if (!isTRUE(attr(x, "standardized")))
     stop("The function 'standardize()' has not been called on the data")
 }

@@ -11,7 +11,7 @@ match_trees(treemap, method = lsap_matching, ...)
 
 \item{method}{A function that performs the matching. It must accept a `TreeMapMatching` object
 as its first argument and return a match table (typically a `data.table`).
-Defaults to \code{\link{bidirectionnal_double_matching}}.}
+Defaults to \code{\link{lsap_matching}} and is the recommended method.}
 
 \item{...}{Additional arguments passed to the matching method.}
 }
@@ -32,9 +32,10 @@ The result is returned as an enriched `TreeMapMatching` object, ready for furthe
 data(PRF025_Field)
 PRF025_Field <- standardize(
   PRF025_Field,
-  xname = "Field_X",
-  yname = "Field_Y",
+  xname = "Field_Xpj",
+  yname = "Field_Ypj",
   dbhname = "DBH",
+  dbhunits = "cm",
   crs = 2959)
 center = c(PRF025_Field$Easting[1], PRF025_Field$Northing[1])
 
@@ -44,12 +45,13 @@ PRF025_Lidar <- standardize(
   xname = "X",
   yname = "Y",
   dbhname = "DBH",
+  dbhunits = "m",
   crs = 2959)
 
 treemap = make_mapmatching(PRF025_Field, PRF025_Lidar, center, 11.28)
 plot(treemap, scale = 2)
 
-treemap = match_trees(treemap, method = lsap_matching, dmax = 2, dz = 0.1, unmatch_cost = 5)
+treemap = match_trees(treemap, method = lsap_matching, dxymax = 2, dzmax = 0.1)
 plot(treemap, scale = 2)
 plot(treemap, rgl = TRUE)
 
