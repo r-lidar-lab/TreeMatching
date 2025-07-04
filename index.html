@@ -76,9 +76,8 @@
 <p>Matching trees between different surveys (e.g., lidar-derived and field-measured) is challenging due to non-rigid and local misalignments. This package introduces robust approaches and 3D strategies, where X and Y come from the spatial coordinates and Z is synthesized from tree DBH or tree height to improve the quality of the matching.</p>
 <p>The current version includes two matching strategies:</p>
 <ul>
-<li>Bidirectional 2-nearest-neighbors 3D matching<br>
-</li>
-<li>Linear Sum Assignment Problem solving (Hungarian method)</li>
+<li>Linear Sum Assignment Problem solving (Hungarian method) (<strong>prefered method</strong>)</li>
+<li>Bidirectional 2-nearest-neighbors 3D matching</li>
 </ul>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
@@ -98,14 +97,8 @@
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">treemap</span>, scale <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">treemap</span>, rgl <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">treemap</span><span class="op">$</span><span class="va">match_table</span></span>
-<span></span>
-<span><span class="va">treemap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">treemap</span>, method <span class="op">=</span> <span class="va">bidirectionnal_double_matching</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">treemap</span>, scale <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">treemap</span>, rgl <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">treemap</span><span class="op">$</span><span class="va">match_table</span></span></code></pre></div>
 <p><img src="reference/figures/PRF025.png"></p>
-<p><img src="reference/figures/PRF200.png"></p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>

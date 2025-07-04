@@ -103,19 +103,21 @@ how its parameters influence the results.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">TreeMatching</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">PRF025_Field</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">PRF025_Lidar</span><span class="op">)</span></span></code></pre></div>
-<p>The user data can be in any format with various name comvention and
-units standard. Thus in order to get everything working we must
-standardize the data by telling which column contains X, Y coordinates
-as well as the DBH or tree height.</p>
+<p>The user’s data can come in any format, with various naming
+conventions and unit standards. Therefore, to ensure everything works
+correctly, we first need to standardize the data by specifying which
+columns contain the X and Y coordinates, as well as the DBH (or tree
+height), what are the units and so on.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">PRF025_Field</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardize.html">standardize</a></span><span class="op">(</span><span class="va">PRF025_Field</span>, <span class="st">"Field_Xpj"</span>, <span class="st">"Field_Ypj"</span>, <span class="st">"DBH"</span>, dbhunits <span class="op">=</span> <span class="st">"cm"</span>, crs <span class="op">=</span> <span class="fl">2959</span><span class="op">)</span></span>
 <span><span class="va">PRF025_Lidar</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardize.html">standardize</a></span><span class="op">(</span><span class="va">PRF025_Lidar</span>, <span class="st">"X"</span>, <span class="st">"Y"</span>, <span class="st">"DBH"</span>, dbhunits <span class="op">=</span> <span class="st">"m"</span>, crs <span class="op">=</span> <span class="fl">2959</span><span class="op">)</span></span></code></pre></div>
-<p>Then, for various reason, the algorithm need to know the center and
-the size of the plot we are dealing with. This is mostly useful for
-filtering data outside the limits. In this specific dataset the center
-is stored and repeated in columns <code>Easting</code> and
-<code>Northing</code>. Then we create the <code>TreeMap</code> object we
-are going to work with</p>
+<p>Next, for various reasons, the algorithm needs to know the center and
+size of the plot we’re working with. This is mainly used to filter out
+trees that fall outside the plot boundaries and plot graphics. In this
+specific dataset, the center of the plot is already stored and repeated
+in the <code>Easting</code> and <code>Northing</code> columns. We now
+use this information to create the <code>TreeMap</code> object that
+we’ll be working with in the following steps.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">center</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">PRF025_Field</span><span class="op">$</span><span class="va">Easting</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">PRF025_Field</span><span class="op">$</span><span class="va">Northing</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
