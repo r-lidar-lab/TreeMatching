@@ -41,7 +41,7 @@
 #'
 #' @importFrom data.table :=
 #' @export
-bidirectionnal_double_matching <- function(treemap, dxymax = 2, dzmax = 0.1)
+bidirectionnal_double_matching <- function(treemap, dxymax = 2, dzmax = 0.05)
 {
   . <- dist1 <- dist2 <- index_inv1 <- index_inv2 <- .I <- index_measure <- index_inventory <- matched_index <- distance <- NULL
   stopifnot(inherits(treemap$measured, "sf"))
@@ -303,7 +303,7 @@ bidirectionnal_double_matching <- function(treemap, dxymax = 2, dzmax = 0.1)
 #' @seealso \link[clue]{solve_LSAP}, \link{make_mapmatching}, \link{match_trees}
 #' @export
 #' @md
-lsap_matching = function(treemap, dxymax = 2, dzmax = 0.1, zrel = 40, unmatch_cost = "auto")
+lsap_matching = function(treemap, dxymax = 2, dzmax = 0.05, zrel = 40, unmatch_cost = "auto")
 {
   inf = 9999999
 

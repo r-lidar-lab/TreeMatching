@@ -51,7 +51,7 @@ PRF025_Lidar <- standardize(
 treemap = make_mapmatching(PRF025_Field, PRF025_Lidar, center, 11.28)
 plot(treemap, scale = 2)
 
-treemap = match_trees(treemap, method = lsap_matching, dxymax = 2, dzmax = 0.1)
+treemap = match_trees(treemap, method = lsap_matching, dxymax = 2, dzmax = 0.05)
 plot(treemap, scale = 2)
 plot(treemap, rgl = TRUE)
 

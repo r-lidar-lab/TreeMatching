@@ -9,7 +9,7 @@
 lsap_matching(
   treemap,
   dxymax = 2,
-  dzmax = 0.1,
+  dzmax = 0.05,
   zrel = 40,
   unmatch_cost = "auto"
 )

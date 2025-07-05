@@ -85,13 +85,13 @@ The results are much better!! Let’s now tune a few other parameters.
 ### `dxymax` and `dzmax`
 
 - `dxymax` sets the maximum horizontal (XY) distance allowed between two matched trees. If two trees are farther apart than this value, their matching cost is set to infinity, meaning they cannot be matched.
-- `dzmax` sets the maximum vertical (Z) distance allowed. In this tutorial, the Z value is based on DBH, so `dzmax = 0.1` means a 10 cm difference is allowed. For example, a tree measured in the field at 15 cm DBH cannot be matched with a LiDAR tree measured at 5 cm DBH, the cost would be infinite.
+- `dzmax` sets the maximum vertical (Z) distance allowed. In this tutorial, the Z value is based on DBH, so `dzmax = 0.03` means a 3 cm difference is allowed. For example, a tree measured in the field at 15 cm DBH cannot be matched with a LiDAR tree measured at 11 cm DBH, the cost would be infinite.
 
 After setting reasonable values for these two parameters, the matching results now look much better.
 
 
 ```{r, fig.width=6, fig.height=6}
-tm <- match_trees(tm, dxymax = 2, dzmax = 0.1, zrel = 40, unmatch_cost = 3)
+tm <- match_trees(tm, dxymax = 2, dzmax = 0.05, zrel = 40, unmatch_cost = 3)
 plot(tm, scale = 2, gg = TRUE)
 ```
 
@@ -106,7 +106,7 @@ To solve this, the Z dimension is scaled so that XY and Z are on a similar scale
 That’s where `zrel` comes in. It lets you control the weight of Z (DBH or height) relative to XY. A value of 0 means Z has no weight, matching is based only on XY distance, pretty much like a k-nearest-neighbors (k-NN) search. This often causes incorrect matches, such as pairing a large tree with a nearby smaller one as seen below.
 
 ```{r, fig.width=6, fig.height=6}
-tm <- match_trees(tm, dxymax = 2, dzmax = 0.1, zrel = 0, unmatch_cost = 3)
+tm <- match_trees(tm, dxymax = 2, dzmax = 0.05, zrel = 0, unmatch_cost = 3)
 plot(tm, scale = 2, gg = TRUE)
 ```
 
@@ -129,7 +129,7 @@ On the other hand, `unmatch_cost` is a very important parameter. It should be lo
 Finding the right `unmatch_cost` value can be challenging. If the user does not specify it, the algorithm uses a simple heuristic to estimate a reasonable default.
 
 ```{r, fig.width=6, fig.height=6}
-tm <- match_trees(tm, dxymax = 2, dzmax = 0.1, zrel = 40)
+tm <- match_trees(tm, dxymax = 2, dzmax = 0.05, zrel = 40)
 plot(tm, scale = 2, gg = TRUE)
 ```
 

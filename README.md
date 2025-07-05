@@ -9,8 +9,8 @@ Matching trees between different surveys (e.g., lidar-derived and field-measured
 
 The current version includes two matching strategies:
 
-- Linear Sum Assignment Problem solving (Hungarian method) (**preferred method**)
-- Bidirectional 2-nearest-neighbors 3D matching
+- Solving Linear Sum Assignment Problem solving (Hungarian method) (**preferred method**)
+- Bidirectional 2-nearest-neighbors 3D matching (**experimental**)
 
 Read the [tutorial 📖](https://r-lidar.github.io/TreeMatching/articles/Tutorial.html)
 
@@ -26,7 +26,7 @@ PRF025_Lidar <- standardize(PRF025_Lidar, "X", "Y", "DBH", dbhunits = "m", crs =
 center <- c(PRF025_Field$Easting[1], PRF025_Field$Northing[1])
 
 treemap <- make_mapmatching(PRF025_Field, PRF025_Lidar, center, radius = 11.28)
-treemap <- match_trees(treemap, method = lsap_matching, dxymax = 2, dzmax = 0.1)
+treemap <- match_trees(treemap, method = lsap_matching, dxymax = 2, dzmax = 0.05)
 
 plot(treemap, scale = 2)
 plot(treemap, rgl = TRUE)
@@ -35,11 +35,12 @@ treemap$match_table
 ```
 
 
-![](man/figures/PRF025.png)
+![](man/figures/PRF.png)
 
 ## Installation
 
+Using package `remotes`.
+
 ```r
-# From GitHub (requires remotes)
 remotes::install_github("r-lidar/TreeMatching")
 ```

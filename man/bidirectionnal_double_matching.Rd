@@ -4,7 +4,7 @@
 \alias{bidirectionnal_double_matching}
 \title{Match Trees Between Measured and Inventory Maps Using 3D 2-Nearest Neighbors}
 \usage{
-bidirectionnal_double_matching(treemap, dxymax = 2, dzmax = 0.1)
+bidirectionnal_double_matching(treemap, dxymax = 2, dzmax = 0.05)
 }
 \arguments{
 \item{treemap}{A `TreeMapMatching` object created with [make_mapmatching()], containing the `inventory`,
