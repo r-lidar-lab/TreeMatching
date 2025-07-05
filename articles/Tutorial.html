@@ -81,17 +81,18 @@
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p><code>TreeMatching</code> matches trees from a LiDAR dataset (either
-ALS or TLS) to trees in an inventory dataset by solving a <strong>Linear
-Sum Assignment Problem (LSAP)</strong> in 3D space. The X and Y
-dimensions represent the tree positions (a positional matching), while
-the third Z dimension is artificially created using either DBH (for TLS)
-or tree height (for ALS). This synthetic Z-dimension improves the
-accuracy of the matching and helps avoid false positives.</p>
-<p>The package uses the <strong>Hungarian algorithm</strong>, which
-always finds the optimal solution to the LSAP. This guarantees the best
-possible matching with the lowest total cost, based on a given cost
-matrix. However, the real challenge is to define a good cost function,
-one that leads to meaningful and accurate matches between trees.</p>
+ALS or TLS) to trees in an inventory dataset by solving a <a href="https://en.wikipedia.org/wiki/Assignment_problem" class="external-link">Linear Sum
+Assignment Problem (LSAP)</a> in 3D space. The X and Y dimensions
+represent the tree positions (a positional matching), while the third Z
+dimension is artificially created using either DBH (for TLS) or tree
+height (for ALS). This synthetic Z-dimension improves the accuracy of
+the matching and helps avoid false positives.</p>
+<p>The package uses the <a href="https://en.wikipedia.org/wiki/Hungarian_algorithm" class="external-link">Hungarian
+algorithm</a>, which always finds the optimal solution to the LSAP. This
+guarantees the best possible matching with the lowest total cost, based
+on a given cost matrix. However, the real challenge is to define a good
+cost function, one that leads to meaningful and accurate matches between
+trees.</p>
 <p>In this tutorial, we explain how <code>TreeMatching</code> works and
 how its parameters influence the results.</p>
 </div>
