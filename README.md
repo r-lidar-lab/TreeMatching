@@ -39,5 +39,5 @@ treemap$match_table
 
 ```r
 # From GitHub (requires remotes)
-remotes::install_github("r-lidar-lab/TreeMatching")
+remotes::install_github("r-lidar/TreeMatching")
 ```
