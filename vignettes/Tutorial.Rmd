@@ -146,7 +146,7 @@ This visual interface is especially useful for beginners, as it allows you to:
 This makes it much easier to understand the impact of each parameter and to fine-tune your matching process.
 
 ```r
-lsap_app(treemap)
+treemap = lsap_app(treemap)
 ```
 
 ![](app.png){width=100%}

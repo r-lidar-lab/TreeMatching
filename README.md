@@ -9,7 +9,7 @@ Matching trees between different surveys (e.g., lidar-derived and field-measured
 
 The current version includes two matching strategies:
 
-- Solving Linear Sum Assignment Problem solving (Hungarian method) (**preferred method**)
+- Solving Linear Sum Assignment Problem ([Hungarian algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm)) (**preferred method**)
 - Bidirectional 2-nearest-neighbors 3D matching (**experimental**)
 
 Read the [tutorial 📖](https://r-lidar.github.io/TreeMatching/articles/Tutorial.html)

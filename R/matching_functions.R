@@ -418,10 +418,10 @@ guess_unmatch_cost = function(treemap, dxymax, dzmax, zrel, ...)
       probability = TRUE,
       breaks = seq(0, max(matched$cost+0.5), length.out = 20),
       xlab = "Cost",
-      main = "Histogram of costs with automatic unmatch_cost")
+      main = "Histogram of costs")
     graphics::abline(v = res, col = "red", lty = 3)
     z = max(h$density)
-    graphics::text(res -0.2, z, label = "Suggested value", col = "red")
+    graphics::text(res - 0.15, z-0.3, label = paste0("Suggested\n 'unmatch_cost'\n", res), col = "red")
   }
 
   return(res)

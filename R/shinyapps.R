@@ -9,11 +9,11 @@ lsap_app <- function(treemap)
         shiny::sidebarPanel(
           width = 3,
           shiny::sliderInput("dxymax", "Max horizontal distance (dxymax)", min = 0, max = 5, value = 2, step = 0.1),
-          shiny::sliderInput("dzmax", "Max height difference (dzmax)", min = 0, max = 5, value = 0.3, step = 0.05),
+          shiny::sliderInput("dzmax", "Max vertical difference (dzmax)", min = 0, max = 5, value = 0.3, step = 0.05),
           shiny::sliderInput("zrel", "Relative importance of Z vs XY (%)", min = 0, max = 100, value = 50, step = 1),
-          shiny::sliderInput("unmatch_cost", "Unmatch cost", min = 0, max = 50, value = 5, step = 0.25),
-          shiny::actionButton("done", "Done", class = "btn-primary"),
-          shiny::plotOutput("histPlot", height = "200px", width = "100%")
+          shiny::sliderInput("unmatch_cost", "Unmatch cost", min = 0, max = 25, value = 5, step = 0.1),
+          shiny::plotOutput("histPlot", height = "300px", width = "100%"),
+          shiny::actionButton("done", "Done", class = "btn-primary")
         ),
         shiny::mainPanel(
           width = 9,
@@ -44,7 +44,7 @@ lsap_app <- function(treemap)
           dxymax = input$dxymax,
           dzmax = input$dzmax,
           zrel = input$zrel,
-          TRUE
+          plot = TRUE
         )
       })
 
@@ -54,5 +54,5 @@ lsap_app <- function(treemap)
     }
   )
 
-  shiny::runApp(app)
+  return(shiny::runApp(app))
 }
