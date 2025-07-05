@@ -42,7 +42,7 @@ plot_plot = function(x, scale = 1)
   plot(sf::st_buffer(center, 4), add = T, border = "blue")
   plot(center, add = T, col = "red", cex = 2, pch = 3)
 
-  shapes = sf::st_buffer(x, x$DBH/2*scale)
+  shapes = sf::st_buffer(x, x$ZDIM/2*scale)
   plot(sf::st_geometry(shapes), add = T, col = "gray")
 }
 
@@ -57,10 +57,10 @@ compare_plot = function(treemap, scale = 1)
   plot(sf::st_buffer(center, 4), add = T, border = "blue")
   plot(center, add = T, col = "red", cex = 2, pch = 3)
 
-  shapes = sf::st_buffer(inventory, inventory$DBH/2*scale)
+  shapes = sf::st_buffer(inventory, inventory$ZDIM/2*scale)
   plot(sf::st_geometry(shapes), add = T, col = "lightgreen", border = "darkgreen")
 
-  shapes = sf::st_buffer(measure, measure$DBH/2*scale)
+  shapes = sf::st_buffer(measure, measure$ZDIM/2*scale)
   plot(sf::st_geometry(shapes), add = T, col = "lightblue", border = "blue")
 
   graphics::legend(x = "topleft", legend=c("Ground truth", "Measurements"), fill = c("lightgreen","lightblue"), border = c("darkgreen", "blue"))
@@ -81,8 +81,8 @@ compare_plot = function(treemap, scale = 1)
 #   matched <- match_table[!is.na(match_table$index_inventory), ]
 #
 #   # Create circle geometries
-#   shapes_inventory <- sf::st_buffer(inventory, inventory$DBH / 2 * scale)
-#   shapes_measure <- sf::st_buffer(measure, measure$DBH / 2 * scale)
+#   shapes_inventory <- sf::st_buffer(inventory, inventory$ZDIM / 2 * scale)
+#   shapes_measure <- sf::st_buffer(measure, measure$ZDIM / 2 * scale)
 #
 #   # Convert to sf objects with color and label columns
 #   shapes_inventory <- sf::st_sf(geometry = sf::st_geometry(shapes_inventory), color = inventory$plot_color, label = inventory$label)
@@ -148,7 +148,7 @@ compare_plot = function(treemap, scale = 1)
 
 compare_plot3d = function(treemap)
 {
-  factor = scale_z_factor(treemap$radius, treemap$inventory$DBH)
+  factor = scale_z_factor(treemap$radius, treemap$inventory$ZDIM)
 
   inventory = treemap$inventory
   measure = treemap$measured
@@ -158,11 +158,11 @@ compare_plot3d = function(treemap)
   offsety = mean(xyz[,2])
   xyz[,1] = xyz[,1] - offsetx
   xyz[,2] = xyz[,2] - offsety
-  xyz$Z = inventory$DBH*factor
+  xyz$Z = inventory$ZDIM*factor
   XYZ = sf::st_coordinates(measure) |> as.data.frame()
   XYZ[,1] = XYZ[,1] - offsetx
   XYZ[,2] = XYZ[,2] - offsety
-  XYZ$Z = measure$DBH*factor
+  XYZ$Z = measure$ZDIM*factor
 
   rgl::plot3d(xyz, asp =1, col = "darkgreen", size = 5)
   rgl::aspect3d("iso")
@@ -189,11 +189,11 @@ plot_spatial_matching = function(treemap, scale = 1)
 
   color = rep("orange", nrow(inventory))
   color[matched$index_inventory] = "black"
-  shapes = sf::st_buffer(inventory, inventory$DBH/2*scale)
+  shapes = sf::st_buffer(inventory, inventory$ZDIM/2*scale)
   plot(sf::st_geometry(shapes), add = T, col = color, border = color)
   graphics::text(sf::st_coordinates(inventory)+0.15, labels = 1:nrow(inventory), cex = 0.5, col = darken(color))
 
-  shapes = sf::st_buffer(measure, measure$DBH/2*scale)
+  shapes = sf::st_buffer(measure, measure$ZDIM/2*scale)
   color = rep("red", nrow(measure))
   color[!inside] = "gray"
   color[matched$index_measure] = "darkgreen"
@@ -228,7 +228,7 @@ plot_spatial_matching3d = function(treemap)
   zrel = attr(treemap$match_table, "zrel")
   if (is.null(zrel)) zrel = 1
 
-  factor = scale_z_factor(treemap$radius, treemap$inventory$DBH, zrel/100)
+  factor = scale_z_factor(treemap$radius, treemap$inventory$ZDIM, zrel/100)
 
   inventory = treemap$inventory
   measure = treemap$measured
@@ -242,7 +242,7 @@ plot_spatial_matching3d = function(treemap)
   matched = match_table[!is.na(match_table$index_inventory),]
 
   xyz = sf::st_coordinates(inventory) |> as.data.frame()
-  xyz$Z = inventory$DBH*factor
+  xyz$Z = inventory$ZDIM*factor
   offsetx = mean(xyz[,1])
   offsety = mean(xyz[,2])
   xyz[,1] = xyz[,1] - offsetx
@@ -251,7 +251,7 @@ plot_spatial_matching3d = function(treemap)
   XYZ = sf::st_coordinates(measure) |> as.data.frame()
   XYZ[,1] = XYZ[,1] - offsetx
   XYZ[,2] = XYZ[,2] - offsety
-  XYZ$Z = measure$DBH*factor
+  XYZ$Z = measure$ZDIM*factor
 
   center_x = sf::st_coordinates(center)[1,1] - offsetx
   center_y = sf::st_coordinates(center)[1,2] - offsety
@@ -324,8 +324,8 @@ plot_spatial_matching_gg = function(treemap, scale = 1)
   measure$label <- seq_len(nrow(measure))
 
   # Create circle geometries
-  shapes_inventory <- sf::st_buffer(inventory, inventory$DBH / 2 * scale)
-  shapes_measure <- sf::st_buffer(measure, measure$DBH / 2 * scale)
+  shapes_inventory <- sf::st_buffer(inventory, inventory$ZDIM / 2 * scale)
+  shapes_measure <- sf::st_buffer(measure, measure$ZDIM / 2 * scale)
 
   # Convert to sf objects with color and label columns
   shapes_inventory <- sf::st_sf(geometry = sf::st_geometry(shapes_inventory), color = inventory$plot_color, label = inventory$label)

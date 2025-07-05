@@ -34,8 +34,8 @@ PRF025_Field <- standardize(
   PRF025_Field,
   xname = "Field_Xpj",
   yname = "Field_Ypj",
-  dbhname = "DBH",
-  dbhunits = "cm",
+  zname = "DBH",
+  zunits = "cm",
   crs = 2959)
 center = c(PRF025_Field$Easting[1], PRF025_Field$Northing[1])
 
@@ -44,8 +44,8 @@ PRF025_Lidar <- standardize(
   PRF025_Lidar,
   xname = "X",
   yname = "Y",
-  dbhname = "DBH",
-  dbhunits = "m",
+  zname = "DBH",
+  zunits = "m",
   crs = 2959)
 
 treemap = make_mapmatching(PRF025_Field, PRF025_Lidar, center, 11.28)

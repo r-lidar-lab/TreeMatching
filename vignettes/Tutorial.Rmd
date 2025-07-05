@@ -36,8 +36,8 @@ data(PRF025_Lidar)
 The user's data can come in any format, with various naming conventions and unit standards. Therefore, to ensure everything works correctly, we first need to standardize the data by specifying which columns contain the X and Y coordinates, as well as the DBH (or tree height), what are the units and so on.
 
 ```{r}
-PRF025_Field <- standardize(PRF025_Field, "Field_Xpj", "Field_Ypj", "DBH", dbhunits = "cm", crs = 2959)
-PRF025_Lidar <- standardize(PRF025_Lidar, "X", "Y", "DBH", dbhunits = "m", crs = 2959)
+PRF025_Field <- standardize(PRF025_Field, "Field_Xpj", "Field_Ypj", "DBH", "cm", crs = 2959)
+PRF025_Lidar <- standardize(PRF025_Lidar, "X", "Y", "DBH", "m", crs = 2959)
 ```
 
 Next, for various reasons, the algorithm needs to know the center and size of the plot we're working with. This is mainly used to filter out trees that fall outside the plot boundaries and plot graphics. In this specific dataset, the center of the plot is already stored and repeated in the `Easting` and `Northing` columns. We now use this information to create the `TreeMap` object that we'll be working with in the following steps.

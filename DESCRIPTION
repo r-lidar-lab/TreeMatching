@@ -11,6 +11,7 @@ Encoding: UTF-8
 LazyData: true
 Imports: 
     clue,
+    methods,
     grDevices,
     stats,
     graphics,

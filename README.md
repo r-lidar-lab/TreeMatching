@@ -21,8 +21,8 @@ library(TreeMatching)
 
 data(PRF025_Field)
 data(PRF025_Lidar)
-PRF025_Field <- standardize(PRF025_Field, "Field_Xpj", "Field_Ypj", "DBH", dbhunits = "cm", crs = 2959)
-PRF025_Lidar <- standardize(PRF025_Lidar, "X", "Y", "DBH", dbhunits = "m", crs = 2959)
+PRF025_Field <- standardize(PRF025_Field, "Field_Xpj", "Field_Ypj", "DBH", "cm", crs = 2959)
+PRF025_Lidar <- standardize(PRF025_Lidar, "X", "Y", "DBH", "m", crs = 2959)
 center <- c(PRF025_Field$Easting[1], PRF025_Field$Northing[1])
 
 treemap <- make_mapmatching(PRF025_Field, PRF025_Lidar, center, radius = 11.28)

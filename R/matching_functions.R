@@ -47,18 +47,18 @@ bidirectionnal_double_matching <- function(treemap, dxymax = 2, dzmax = 0.05)
   stopifnot(inherits(treemap$measured, "sf"))
   stopifnot(inherits(treemap$inventory, "sf"))
 
-  factor = scale_z_factor(treemap$radius, treemap$inventory$DBH)
+  factor = scale_z_factor(treemap$radius, treemap$inventory$ZDIM)
 
   d = as.numeric(sf::st_distance(treemap$measured, treemap$center))
   inside = d < treemap$radius
-  treemap$measured$DBH[!inside] = 9999999 # They will never match
+  treemap$measured$ZDIM[!inside] = 9999999 # They will never match
 
-  # Extract 2D coordinates and add a synthetic Z dimension from DBH
+  # Extract 2D coordinates and add a synthetic Z dimension from ZDIM
   coords_inventory <- sf::st_coordinates(treemap$inventory)
   coords_measure   <- sf::st_coordinates(treemap$measured)
 
-  coords_inventory_3d <- cbind(coords_inventory, treemap$inventory$DBH * factor)
-  coords_measure_3d   <- cbind(coords_measure,   treemap$measured$DBH   * factor)
+  coords_inventory_3d <- cbind(coords_inventory, treemap$inventory$ZDIM * factor)
+  coords_measure_3d   <- cbind(coords_measure,   treemap$measured$ZDIM   * factor)
   dzmax = dzmax * factor
 
   # Extract X, Y, Z for fast access
@@ -220,11 +220,11 @@ bidirectionnal_double_matching <- function(treemap, dxymax = 2, dzmax = 0.05)
   # Keep only the closest measure per inventory tree for first neighbors
   tmp = match_table[different]
   xyz = sf::st_coordinates(treemap$measured)[tmp$index_measure,, drop = FALSE]
-  xyz = cbind(xyz, treemap$measured$DBH[tmp$index_measure] * factor)
+  xyz = cbind(xyz, treemap$measured$ZDIM[tmp$index_measure] * factor)
   XYZ1 = sf::st_coordinates(treemap$inventory)[tmp$index_inventory,, drop = FALSE]
-  XYZ1 = cbind(XYZ1, treemap$inventory$DBH[tmp$index_inventory] * factor)
+  XYZ1 = cbind(XYZ1, treemap$inventory$ZDIM[tmp$index_inventory] * factor)
   XYZ2 = sf::st_coordinates(treemap$inventory)[tmp$index_inventory2,, drop = FALSE]
-  XYZ2 = cbind(XYZ2, treemap$inventory$DBH[tmp$index_inventory2] * factor)
+  XYZ2 = cbind(XYZ2, treemap$inventory$ZDIM[tmp$index_inventory2] * factor)
   d1 = sqrt((xyz[,1] - XYZ1[,1])^2 + (xyz[,2] - XYZ1[,2])^2 + (xyz[,3] - XYZ1[,3])^2)
   d2 = sqrt((xyz[,1] - XYZ2[,1])^2 + (xyz[,2] - XYZ2[,2])^2 + (xyz[,3] - XYZ2[,3])^2)
   idx = ifelse(d1 < d2, tmp$index_inventory, tmp$index_inventory2)
@@ -239,9 +239,9 @@ bidirectionnal_double_matching <- function(treemap, dxymax = 2, dzmax = 0.05)
     dup = match_table[matched_index %in% dup_idx]
 
     xyz = sf::st_coordinates(treemap$measured)[dup$index_measure,, drop = FALSE]
-    xyz = cbind(xyz, treemap$measured$DBH[dup$index_measure] * factor)
+    xyz = cbind(xyz, treemap$measured$ZDIM[dup$index_measure] * factor)
     XYZ = sf::st_coordinates(treemap$inventory)[dup$matched_index,, drop = FALSE]
-    XYZ = cbind(XYZ, treemap$inventory$DBH[dup$matched_index] * factor)
+    XYZ = cbind(XYZ, treemap$inventory$ZDIM[dup$matched_index] * factor)
     d = sqrt((xyz[,1] - XYZ[,1])^2 + (xyz[,2] - XYZ[,2])^2 + (xyz[,3] - XYZ[,3])^2)
     dup$distance = d
 
@@ -310,7 +310,7 @@ lsap_matching = function(treemap, dxymax = 2, dzmax = 0.05, zrel = 40, unmatch_c
   measured = treemap$measured
   inventory = treemap$inventory
 
-  factor = scale_z_factor(treemap$radius, inventory$DBH, zrel/100)
+  factor = scale_z_factor(treemap$radius, inventory$ZDIM, zrel/100)
 
   if (!is.numeric(unmatch_cost))
   {
@@ -322,11 +322,11 @@ lsap_matching = function(treemap, dxymax = 2, dzmax = 0.05, zrel = 40, unmatch_c
   # matching
   d = as.numeric(sf::st_distance(measured, treemap$center))
   inside = d < treemap$radius
-  measured$DBH[!inside] = inf
+  measured$ZDIM[!inside] = inf
 
-  # Extract coordinates and add a synthetic Z dimension from DBH
-  coords_inventory_1d = treemap$inventory$DBH * factor
-  coords_measure_1d = treemap$measured$DBH *factor
+  # Extract coordinates and add a synthetic Z dimension from ZDIM
+  coords_inventory_1d = treemap$inventory$ZDIM * factor
+  coords_measure_1d = treemap$measured$ZDIM *factor
 
   coords_inventory_2d <- sf::st_coordinates(treemap$inventory)
   coords_measure_2d   <- sf::st_coordinates(measured)
@@ -344,7 +344,7 @@ lsap_matching = function(treemap, dxymax = 2, dzmax = 0.05, zrel = 40, unmatch_c
   }
 
   # 1D 2D and 3D distance matrices
-  # 1D allows to remove connections between trees that have a too big difference in Z (DBH)
+  # 1D allows to remove connections between trees that have a too big difference in Z (ZDIM)
   # 2D allows to remove connection between trees that have a too big difference in distance
   # 3D is solved as Linear Sum Assignment Problem this is the cost of assignment
   d1 = dist_matrix(cbind(0, coords_inventory_1d), cbind(0, coords_measure_1d))
@@ -403,7 +403,7 @@ scale_z_factor = function(radius, z, zrel = 1)
 guess_unmatch_cost = function(treemap, dxymax, dzmax, zrel, ...)
 {
   p = list(...)
-  factor = scale_z_factor(treemap$radius, treemap$inventory$DBH, zrel/100)
+  factor = scale_z_factor(treemap$radius, treemap$inventory$ZDIM, zrel/100)
   unmatch_cost = dxymax + dzmax * factor * 0.5
   matched = lsap_matching(treemap, dxymax, dzmax, zrel, unmatch_cost)
   q = stats::quantile(matched$cost, probs = 0.95)
