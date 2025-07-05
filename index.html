@@ -76,8 +76,8 @@
 <p>Matching trees between different surveys (e.g., lidar-derived and field-measured) is challenging due to non-rigid and local misalignments. This package introduces robust approaches and 3D strategies, where X and Y come from the spatial coordinates and Z is synthesized from tree DBH or tree height to improve the quality of the matching.</p>
 <p>The current version includes two matching strategies:</p>
 <ul>
-<li>Linear Sum Assignment Problem solving (Hungarian method) (<strong>preferred method</strong>)</li>
-<li>Bidirectional 2-nearest-neighbors 3D matching</li>
+<li>Solving Linear Sum Assignment Problem solving (Hungarian method) (<strong>preferred method</strong>)</li>
+<li>Bidirectional 2-nearest-neighbors 3D matching (<strong>experimental</strong>)</li>
 </ul>
 <p>Read the <a href="https://r-lidar.github.io/TreeMatching/articles/Tutorial.html" class="external-link">tutorial 📖</a></p>
 <div class="section level2">
@@ -93,20 +93,20 @@
 <span><span class="va">center</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">PRF025_Field</span><span class="op">$</span><span class="va">Easting</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">PRF025_Field</span><span class="op">$</span><span class="va">Northing</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">treemap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/make_mapmatching.html">make_mapmatching</a></span><span class="op">(</span><span class="va">PRF025_Field</span>, <span class="va">PRF025_Lidar</span>, <span class="va">center</span>, radius <span class="op">=</span> <span class="fl">11.28</span><span class="op">)</span></span>
-<span><span class="va">treemap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">treemap</span>, method <span class="op">=</span> <span class="va">lsap_matching</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
+<span><span class="va">treemap</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">treemap</span>, method <span class="op">=</span> <span class="va">lsap_matching</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">treemap</span>, scale <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">treemap</span>, rgl <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">treemap</span><span class="op">$</span><span class="va">match_table</span></span></code></pre></div>
-<p><img src="reference/figures/PRF025.png"></p>
+<p><img src="reference/figures/PRF.png"></p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
+<p>Using package <code>remotes</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># From GitHub (requires remotes)</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"r-lidar/TreeMatching"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"r-lidar/TreeMatching"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 

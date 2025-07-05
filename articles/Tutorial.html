@@ -187,14 +187,15 @@ be matched.</li>
 <li>
 <code>dzmax</code> sets the maximum vertical (Z) distance allowed.
 In this tutorial, the Z value is based on DBH, so
-<code>dzmax = 0.1</code> means a 10 cm difference is allowed. For
+<code>dzmax = 0.03</code> means a 3 cm difference is allowed. For
 example, a tree measured in the field at 15 cm DBH cannot be matched
-with a LiDAR tree measured at 5 cm DBH, the cost would be infinite.</li>
+with a LiDAR tree measured at 11 cm DBH, the cost would be
+infinite.</li>
 </ul>
 <p>After setting reasonable values for these two parameters, the
 matching results now look much better.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">tm</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">0.1</span>, zrel <span class="op">=</span> <span class="fl">40</span>, unmatch_cost <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">tm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">tm</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">0.05</span>, zrel <span class="op">=</span> <span class="fl">40</span>, unmatch_cost <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tm</span>, scale <span class="op">=</span> <span class="fl">2</span>, gg <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Tutorial_files/figure-html/unnamed-chunk-8-1.png" width="576"></p>
 </div>
@@ -220,7 +221,7 @@ k-nearest-neighbors (k-NN) search. This often causes incorrect matches,
 such as pairing a large tree with a nearby smaller one as seen
 below.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">tm</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">0.1</span>, zrel <span class="op">=</span> <span class="fl">0</span>, unmatch_cost <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">tm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">tm</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">0.05</span>, zrel <span class="op">=</span> <span class="fl">0</span>, unmatch_cost <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tm</span>, scale <span class="op">=</span> <span class="fl">2</span>, gg <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Tutorial_files/figure-html/unnamed-chunk-9-1.png" width="576"></p>
 <p>A value of infinity (or a very large number) gives no weight to XY,
@@ -258,8 +259,8 @@ prevent skipping valid matches.</p>
 If the user does not specify it, the algorithm uses a simple heuristic
 to estimate a reasonable default.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">tm</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">0.1</span>, zrel <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></span>
-<span><span class="co">#&gt; unmatch_cost = 2.01</span></span>
+<code class="sourceCode R"><span><span class="va">tm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">tm</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">0.05</span>, zrel <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></span>
+<span><span class="co">#&gt; unmatch_cost = 1.49</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tm</span>, scale <span class="op">=</span> <span class="fl">2</span>, gg <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Tutorial_files/figure-html/unnamed-chunk-11-1.png" width="576"></p>
 </div>
