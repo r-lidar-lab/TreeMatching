@@ -44,3 +44,9 @@ Using package `remotes`.
 ```r
 remotes::install_github("r-lidar/TreeMatching")
 ```
+
+## Sponsor
+
+`lidRalignment` has been sponsored by the [University of Sherbrooke](https://www.usherbrooke.ca/)
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Universit%C3%A9_de_Sherbrooke_%28logo%29_%282%29.svg/langfr-1920px-Universit%C3%A9_de_Sherbrooke_%28logo%29_%282%29.svg.png" alt="Description" width="400">
