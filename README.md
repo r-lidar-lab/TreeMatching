@@ -51,4 +51,4 @@ remotes::install_github("r-lidar/TreeMatching")
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Universit%C3%A9_de_Sherbrooke_%28logo%29_%282%29.svg/langfr-1920px-Universit%C3%A9_de_Sherbrooke_%28logo%29_%282%29.svg.png" alt="Description" width="400">
 
-The package was developed with the help of the data acquired by Murray E. Woods and Margaret Penner [Forest Analysis Ltd](http://forestanalysis.ca/) with testing contribution by Bastien Vandendaele: [Canadian Forest Service](https://natural-resources.canada.ca/science-data/science-research/research-centres/laurentian-forestry-centre)
+The development of the package was supported by data collected by Murray E. Woods and Margaret Penner [Forest Analysis Ltd](http://forestanalysis.ca/) with testing contribution by Bastien Vandendaele: [Canadian Forest Service](https://natural-resources.canada.ca/science-data/science-research/research-centres/laurentian-forestry-centre)
