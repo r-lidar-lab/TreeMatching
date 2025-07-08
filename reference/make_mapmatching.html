@@ -56,7 +56,7 @@ and a matching radius. This object is used as input for tree matching algorithms
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_mapmatching</span><span class="op">(</span><span class="va">inventory</span>, <span class="va">measured</span>, <span class="va">center</span>, radius <span class="op">=</span> <span class="fl">11.28</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_mapmatching</span><span class="op">(</span><span class="va">inventory</span>, <span class="va">measured</span>, <span class="va">center</span>, radius <span class="op">=</span> <span class="fl">11.28</span>, buffer <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -77,6 +77,13 @@ and a matching radius. This object is used as input for tree matching algorithms
 
 <dt id="arg-radius">radius<a class="anchor" aria-label="anchor" href="#arg-radius"></a></dt>
 <dd><p>A numeric value indicating the plot radius (in projection units). Default is 11.28.</p></dd>
+
+
+<dt id="arg-buffer">buffer<a class="anchor" aria-label="anchor" href="#arg-buffer"></a></dt>
+<dd><p>The radius of the plot is defined by 'radius'. Due to measurement uncertainty,
+some trees measured with the LiDAR may fall just outside the plot boundary. These trees are
+neither counted nor matched. Adding a buffer allows matching trees outside the plot without
+penalizing the scores if those trees remain unmatched.</p></dd>
 
 </dl></div>
     <div id="value">

@@ -147,11 +147,11 @@ makes sense or not.</p>
 <p>However, in real-world forest inventories, it’s common to have
 omissions (missing trees) and commissions (extra trees). The standard
 LSAP solver does not support these cases by default.</p>
-<p>To fix this, we can introduce dummy trees, and assign a constant cost
-to matching a real tree with a dummy one. This is exactly what the
-<code>unmatch_cost</code> parameter does. For example, if we set
-<code>unmatch_cost = 10000</code>, it means that matching a tree with a
-dummy is very expensive, so the algorithm will avoid it unless
+<p>To overcome these limits, we can introduce dummy trees, and assign a
+constant cost to matching a real tree with a dummy one. This is exactly
+what the <code>unmatch_cost</code> parameter does. For example, if we
+set <code>unmatch_cost = 10000</code>, it means that matching a tree
+with a dummy is very expensive, so the algorithm will avoid it unless
 absolutely necessary.</p>
 <p>Now let’s try using a very low value, like
 <code>unmatch_cost = 0.7</code>. In this case, most trees are
@@ -186,16 +186,18 @@ this value, their matching cost is set to infinity, meaning they cannot
 be matched.</li>
 <li>
 <code>dzmax</code> sets the maximum vertical (Z) distance allowed.
-In this tutorial, the Z value is based on DBH, so
-<code>dzmax = 0.03</code> means a 3 cm difference is allowed. For
-example, a tree measured in the field at 15 cm DBH cannot be matched
-with a LiDAR tree measured at 11 cm DBH, the cost would be
-infinite.</li>
+In order to work both with ALS using tree height and TLS using DBH this
+parameters is expressed in percent. In this tutorial, the Z value is
+based on DBH, so <code>dzmax = 30</code> means a 30% difference is
+allowed between the DBH of the ground inventory and the DBH measured
+with the lidar. For example, a tree measured in the field at 14 cm DBH
+cannot be matched with a LiDAR tree measured at 7 cm DBH (50%
+difference), the cost would be infinite.</li>
 </ul>
 <p>After setting reasonable values for these two parameters, the
 matching results now look much better.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">tm</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">0.05</span>, zrel <span class="op">=</span> <span class="fl">40</span>, unmatch_cost <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">tm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">tm</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">30</span>, zrel <span class="op">=</span> <span class="fl">40</span>, unmatch_cost <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tm</span>, scale <span class="op">=</span> <span class="fl">2</span>, gg <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Tutorial_files/figure-html/unnamed-chunk-8-1.png" width="576"></p>
 </div>
@@ -218,10 +220,10 @@ inappropriately.</p>
 weight of Z (DBH or height) relative to XY. A value of 0 means Z has no
 weight, matching is based only on XY distance, pretty much like a
 k-nearest-neighbors (k-NN) search. This often causes incorrect matches,
-such as pairing a large tree with a nearby smaller one as seen
-below.</p>
+such as pairing a large tree with a nearby smaller one (if no constraint
+the Z difference) as seen below.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">tm</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">0.05</span>, zrel <span class="op">=</span> <span class="fl">0</span>, unmatch_cost <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">tm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">tm</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">100</span>, zrel <span class="op">=</span> <span class="fl">0</span>, unmatch_cost <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tm</span>, scale <span class="op">=</span> <span class="fl">2</span>, gg <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Tutorial_files/figure-html/unnamed-chunk-9-1.png" width="576"></p>
 <p>A value of infinity (or a very large number) gives no weight to XY,
@@ -259,8 +261,8 @@ prevent skipping valid matches.</p>
 If the user does not specify it, the algorithm uses a simple heuristic
 to estimate a reasonable default.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">tm</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">0.05</span>, zrel <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></span>
-<span><span class="co">#&gt; unmatch_cost = 1.49</span></span>
+<code class="sourceCode R"><span><span class="va">tm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_trees.html">match_trees</a></span><span class="op">(</span><span class="va">tm</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">30</span>, zrel <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></span>
+<span><span class="co">#&gt; unmatch_cost = 1.53</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tm</span>, scale <span class="op">=</span> <span class="fl">2</span>, gg <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Tutorial_files/figure-html/unnamed-chunk-11-1.png" width="576"></p>
 </div>
@@ -285,6 +287,60 @@ and to fine-tune your matching process.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">treemap</span> <span class="op">=</span> <span class="fu"><a href="../reference/lsap_matching.html">lsap_app</a></span><span class="op">(</span><span class="va">treemap</span><span class="op">)</span></span></code></pre></div>
 <p><img src="app.png" style="width:100.0%"></p>
+</div>
+<div class="section level2">
+<h2 id="score-and-matching-table">Score and matching table<a class="anchor" aria-label="anchor" href="#score-and-matching-table"></a>
+</h2>
+<p>After applying <code>match_tree</code> the
+<code>TreeMapMatching</code> object contains the matching table as well
+a some standard matching score. True Positive (TP), False Negative (FN),
+False Positive (FP), precision, recall and F-score.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tm</span><span class="op">$</span><span class="va">match_table</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   index_inventory index_measure      cost    state</span></span>
+<span><span class="co">#&gt; 1               1            72 0.5659616  Matched</span></span>
+<span><span class="co">#&gt; 2               2            81 0.4238956  Matched</span></span>
+<span><span class="co">#&gt; 3               3            88 0.6373774  Matched</span></span>
+<span><span class="co">#&gt; 4               4            90 0.5448624  Matched</span></span>
+<span><span class="co">#&gt; 5               5            NA        NA Omission</span></span>
+<span><span class="co">#&gt; 6               6            54 0.4050463  Matched</span></span>
+<span><span class="va">tm</span><span class="op">$</span><span class="va">scores</span></span>
+<span><span class="co">#&gt; $TP</span></span>
+<span><span class="co">#&gt; [1] 57</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $FN</span></span>
+<span><span class="co">#&gt; [1] 5</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $FP</span></span>
+<span><span class="co">#&gt; [1] 16</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $precision</span></span>
+<span><span class="co">#&gt; [1] 0.7808219</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $recall</span></span>
+<span><span class="co">#&gt; [1] 0.9193548</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $Fscore</span></span>
+<span><span class="co">#&gt; [1] 0.8444444</span></span></code></pre></div>
+<p>With the matching table the user can compare individual tree
+attribute from the original data.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">true_positive</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">tm</span><span class="op">$</span><span class="va">match_table</span><span class="op">)</span></span>
+<span><span class="va">dbh_inventory</span> <span class="op">=</span> <span class="va">tm</span><span class="op">$</span><span class="va">inventory</span><span class="op">[</span><span class="va">true_positive</span><span class="op">$</span><span class="va">index_inventory</span>,<span class="op">]</span><span class="op">$</span><span class="va">DBH</span> </span>
+<span><span class="va">dbh_measured</span>  <span class="op">=</span> <span class="va">tm</span><span class="op">$</span><span class="va">measure</span><span class="op">[</span><span class="va">true_positive</span><span class="op">$</span><span class="va">index_measure</span>,<span class="op">]</span><span class="op">$</span><span class="va">DBH</span> <span class="op">*</span> <span class="fl">100</span> </span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">dbh_inventory</span>, <span class="va">dbh_measured</span>, asp <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>     xlab <span class="op">=</span> <span class="st">"Ground thruth DBH (cm)"</span>,</span>
+<span>     ylab <span class="op">=</span> <span class="st">"Lidar measured DBH (cm)"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>, lty <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">height_inventory</span> <span class="op">=</span> <span class="va">tm</span><span class="op">$</span><span class="va">inventory</span><span class="op">[</span><span class="va">true_positive</span><span class="op">$</span><span class="va">index_inventory</span>,<span class="op">]</span><span class="op">$</span><span class="va">Ht</span> </span>
+<span><span class="va">height_measured</span>  <span class="op">=</span> <span class="va">tm</span><span class="op">$</span><span class="va">measure</span><span class="op">[</span><span class="va">true_positive</span><span class="op">$</span><span class="va">index_measure</span>,<span class="op">]</span><span class="op">$</span><span class="va">TH</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">height_inventory</span>, <span class="va">height_measured</span>, asp <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>     xlab <span class="op">=</span> <span class="st">"Ground thruth height (m)"</span>,</span>
+<span>     ylab <span class="op">=</span> <span class="st">"Lidar measured height (m)"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>, lty <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Tutorial_files/figure-html/unnamed-chunk-13-1.png" width="384"><img src="Tutorial_files/figure-html/unnamed-chunk-13-2.png" width="384"></p>
 </div>
   </div>
 

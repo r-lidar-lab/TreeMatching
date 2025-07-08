@@ -118,8 +118,8 @@ The result is returned as an enriched `TreeMapMatching` object, ready for furthe
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">treemap</span>, scale <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="match_trees-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">treemap</span> <span class="op">=</span> <span class="fu">match_trees</span><span class="op">(</span><span class="va">treemap</span>, method <span class="op">=</span> <span class="va">lsap_matching</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> unmatch_cost = 2.01 </span>
+<span class="r-in"><span><span class="va">treemap</span> <span class="op">=</span> <span class="fu">match_trees</span><span class="op">(</span><span class="va">treemap</span>, method <span class="op">=</span> <span class="va">lsap_matching</span>, dxymax <span class="op">=</span> <span class="fl">2</span>, dzmax <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> unmatch_cost = 1.53 </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">treemap</span>, scale <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="match_trees-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">treemap</span>, rgl <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -129,66 +129,85 @@ The result is returned as an enriched `TreeMapMatching` object, ready for furthe
 <span class="r-plt img"><img src="match_trees-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">treemap</span><span class="op">$</span><span class="va">match_table</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     index_inventory index_measure      cost</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;num&gt;         &lt;num&gt;     &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:               1            72 0.5659616</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:               2            81 0.4238956</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:               3            88 0.6373774</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:               4            90 0.5448624</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:               6            54 0.4050463</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:               7            61 0.2338536</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:               8            62 0.5303301</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:               9            75 0.5448624</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:              10            68 0.3644345</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:              11            79 0.5659616</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:              12            60 0.5994789</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:              13            49 0.5303301</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:              14            34 0.8705243</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:              15            42 0.6312191</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:              16            20 0.8338540</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:              17            11 0.7551904</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17:              18            27 0.7705518</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18:              20            26 0.7905694</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19:              21            39 0.8794530</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20:              22            14 0.7954951</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21:              23            13 0.7806247</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22:              24             9 1.0345591</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23:              25             7 0.7705518</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24:              26             6 0.8244316</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25:              27            28 0.7447735</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26:              28            16 0.8838835</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27:              29            32 0.7180703</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28:              30            19 0.9057110</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29:              31            21 0.8003905</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30:              32            17 0.7126096</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31:              33            22 0.6731456</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32:              34            46 0.7288690</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33:              35            35 0.8338540</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34:              36            40 0.8291562</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35:              37            45 0.8100926</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36:              38            44 0.7342088</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37:              39            47 0.7905694</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38:              40            66 1.0155048</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39:              41            65 0.9842510</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40:              42            69 0.9560662</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41:              43            78 0.7126096</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42:              44            59 0.7654655</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43:              45            91 1.0345591</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44:              46            85 0.5994789</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45:              47            74 0.6434769</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46:              48            92 0.7288690</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47:              50            80 0.4050463</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48:              51            55 0.4592793</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49:              52            56 0.8660254</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50:              54            48 0.3852759</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51:              55            33 0.7500000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52:              56            12 0.9560662</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53:              57            25 0.7071068</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54:              58            53 0.8338540</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55:              59            38 0.8196798</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56:              61            67 0.5659616</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57:              62            58 0.5077524</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     index_inventory index_measure      cost</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    index_inventory index_measure      cost      state</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                1            72 0.5659616    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                2            81 0.4238956    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                3            88 0.6373774    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                4            90 0.5448624    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                5            NA        NA   Omission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                6            54 0.4050463    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                7            61 0.2338536    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                8            62 0.5303301    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                9            75 0.5448624    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10              10            68 0.3644345    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11              11            79 0.5659616    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12              12            60 0.5994789    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13              13            49 0.5303301    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14              14            34 0.8705243    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15              15            42 0.6312191    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16              16            20 0.8338540    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17              17            11 0.7551904    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18              18            27 0.7705518    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19              19            NA        NA   Omission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20              20            26 0.7905694    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21              21            39 0.8794530    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22              22            14 0.7954951    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23              23            13 0.7806247    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24              24             9 1.0345591    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25              25             7 0.7705518    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26              26             6 0.8244316    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27              27            28 0.7447735    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28              28            16 0.8838835    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29              29            32 0.7180703    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30              30            19 0.9057110    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31              31            21 0.8003905    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32              32            17 0.7126096    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33              33            22 0.6731456    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34              34            46 0.7288690    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35              35            35 0.8338540    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36              36            40 0.8291562    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37              37            45 0.8100926    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38              38            44 0.7342088    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39              39            47 0.7905694    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40              40            66 1.0155048    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41              41            65 0.9842510    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42              42            69 0.9560662    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43              43            78 0.7126096    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44              44            59 0.7654655    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45              45            91 1.0345591    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46              46            85 0.5994789    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47              47            74 0.6434769    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48              48            92 0.7288690    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49              49            NA        NA   Omission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50              50            80 0.4050463    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51              51            55 0.4592793    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52              52            56 0.8660254    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53              53            NA        NA   Omission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54              54            48 0.3852759    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55              55            33 0.7500000    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56              56            12 0.9560662    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57              57            25 0.7071068    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58              58            53 0.8338540    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59              59            38 0.8196798    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60              60            NA        NA   Omission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61              61            67 0.5659616    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62              62            58 0.5077524    Matched</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66              NA             4        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68              NA             8        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69              NA            10        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71              NA            18        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74              NA            29        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78              NA            37        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79              NA            41        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80              NA            43        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82              NA            51        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85              NA            63        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91              NA            77        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92              NA            82        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94              NA            84        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95              NA            86        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96              NA            87        NA Commission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97              NA            89        NA Commission</span>
 </code></pre></div>
     </div>
   </div>
