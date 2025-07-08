@@ -7,6 +7,10 @@
 #' @param measured An `sf` object of class `"TreeMap"` representing the lidar measured trees.
 #' @param center A numeric vector of length 2 representing the X and Y coordinates of the center point.
 #' @param radius A numeric value indicating the plot radius (in projection units). Default is 11.28.
+#' @param buffer The radius of the plot is defined by 'radius'. Due to measurement uncertainty,
+#' some trees measured with the LiDAR may fall just outside the plot boundary. These trees are
+#' neither counted nor matched. Adding a buffer allows matching trees outside the plot without
+#' penalizing the scores if those trees remain unmatched.
 #'
 #' @return A `TreeMapMatching` object: a list with components:
 #' \itemize{
@@ -45,7 +49,7 @@
 #'
 #' treemap = make_mapmatching(PRF025_Field, PRF025_Lidar, center, 11.28)
 #' plot(treemap)
-make_mapmatching = function(inventory, measured, center, radius = 11.28)
+make_mapmatching = function(inventory, measured, center, radius = 11.28, buffer = 0.5)
 {
   is_standardized(inventory)
   is_standardized(measured)
@@ -54,7 +58,7 @@ make_mapmatching = function(inventory, measured, center, radius = 11.28)
   center = sf::st_point(center)
   center = sf::st_sfc(center, crs = sf::st_crs(inventory))
 
-  ans = list(inventory = inventory, measured = measured, center = center, radius = radius)
+  ans = list(inventory = inventory, measured = measured, center = center, radius = radius, buffer = buffer)
   class(ans) = "TreeMapMatching"
 
   ans

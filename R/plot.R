@@ -51,9 +51,11 @@ compare_plot = function(treemap, scale = 1)
   inventory = treemap$inventory
   measure = treemap$measured
   radius = treemap$radius
+  buffer = treemap$buffer
   center = treemap$center
 
-  plot(sf::st_buffer(center, radius), border = "red", axes = T)
+  plot(sf::st_buffer(center, radius+buffer), border = "red", lty = 3, axes = TRUE)
+  plot(sf::st_buffer(center, radius), border = "red", add = T)
   plot(sf::st_buffer(center, 4), add = T, border = "blue")
   plot(center, add = T, col = "red", cex = 2, pch = 3)
 
@@ -174,16 +176,19 @@ plot_spatial_matching = function(treemap, scale = 1)
 {
   inventory = treemap$inventory
   measure = treemap$measured
+  buffer = treemap$buffer
   radius = treemap$radius
   center = treemap$center
   match_table = treemap$match_table
+  match_table = stats::na.omit(match_table)
 
   d = as.numeric(sf::st_distance(treemap$measured, treemap$center))
   inside = d < treemap$radius
 
   matched = match_table[!is.na(match_table$index_inventory),]
 
-  plot(sf::st_buffer(center, 11.28), border = "red", axes = T)
+  plot(sf::st_buffer(center, radius+buffer), border = "red", lty = 3, axes = TRUE)
+  plot(sf::st_buffer(center, radius), border = "red", add = T)
   plot(sf::st_buffer(center, 4), add = T, border = "blue")
   plot(center, add = T, col = "red", cex = 2, pch = 3)
 
@@ -235,6 +240,7 @@ plot_spatial_matching3d = function(treemap)
   radius = treemap$radius
   center = treemap$center
   match_table = treemap$match_table
+  match_table = stats::na.omit(match_table)
 
   d = as.numeric(sf::st_distance(treemap$measured, treemap$center))
   inside = d < treemap$radius
@@ -258,7 +264,7 @@ plot_spatial_matching3d = function(treemap)
   theta <- seq(0, 2 * pi, length.out = 50)
   cos_theta <- cos(theta)
   sin_theta <- sin(theta)
-  radius = 11.28
+  radius = treemap$radius
 
   for (i in seq_along(center_x))
   {
@@ -303,6 +309,7 @@ plot_spatial_matching_gg = function(treemap, scale = 1)
   radius = treemap$radius
   center = treemap$center
   match_table = treemap$match_table
+  match_table = stats::na.omit(match_table)
 
 
   # Compute distances and determine which measured points are inside the plot radius
@@ -359,7 +366,8 @@ plot_spatial_matching_gg = function(treemap, scale = 1)
 
   # Generate ggplot
   ggplot2::ggplot() +
-    ggplot2::geom_sf(data = sf::st_buffer(treemap$center, 11.28), fill = NA, color = "red") +
+    ggplot2::geom_sf(data = sf::st_buffer(treemap$center, treemap$radius+treemap$buffer), fill = NA, color = "red", linetype = 3) +
+    ggplot2::geom_sf(data = sf::st_buffer(treemap$center, treemap$radius), fill = NA, color = "red") +
     ggplot2::geom_sf(data = sf::st_buffer(treemap$center, 4), fill = NA, color = "blue") +
     ggplot2::geom_sf(data = treemap$center, shape = 3, size = 3, color = "red") +
     ggplot2::geom_sf(data = shapes_inventory, fill = shapes_inventory$color) +

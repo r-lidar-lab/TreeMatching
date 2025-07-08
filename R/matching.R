@@ -42,13 +42,59 @@
 #' treemap = make_mapmatching(PRF025_Field, PRF025_Lidar, center, 11.28)
 #' plot(treemap, scale = 2)
 #'
-#' treemap = match_trees(treemap, method = lsap_matching, dxymax = 2, dzmax = 0.1)
+#' treemap = match_trees(treemap, method = lsap_matching, dxymax = 2, dzmax = 30)
 #' plot(treemap, scale = 2)
 #' plot(treemap, rgl = TRUE)
 #'
 #' treemap$match_table
 match_trees = function(treemap, method = lsap_matching, ...)
 {
-  treemap$match_table = method(treemap, ...)
+  match_table = method(treemap, ...)
+
+  zrel = attr(match_table, "zrel")
+
+  # Add omissions
+  n <- nrow(treemap$inventory)
+  full_index <- data.frame(index_inventory = 1:n)
+  match_table <- merge(full_index, match_table, by = "index_inventory", all.x = TRUE)
+  match_table <- match_table[order(match_table$index_inventory), ]
+
+  # Add commission
+  full_index <- 1:nrow(treemap$measured)
+  b = full_index %in% match_table$index_measure
+  index = full_index[!b]
+  missing = data.frame(index_inventory = NA, index_measure = index, cost = NA)
+  match_table = rbind(match_table, missing)
+
+  # Label Omission/Commission
+  match_table$state = "Matched"
+  match_table$state[is.na(match_table$index_measure)] = "Omission"
+  match_table$state[is.na(match_table$index_inventory)] = "Commission"
+  match_table$state = as.factor(match_table$state)
+
+  # Remove trees outside the limits
+  d = as.numeric(sf::st_distance(treemap$measured, treemap$center))
+  outside = d > (treemap$radius)
+  outside = which(outside)
+  idx = which(match_table$index_measure %in% outside)
+  match_table$outside = FALSE
+  match_table$outside[idx] = TRUE
+  match_table = match_table[match_table$outside == FALSE | (match_table$outside == TRUE & match_table$state == "Matched"), ]
+  match_table$outside = NULL
+
+  attr(match_table, "zrel") = zrel
+
+  # Compute scores
+  tp <- sum(match_table$state == "Matched")
+  fn <- sum(match_table$state == "Omission")
+  fp <- sum(match_table$state == "Commission")
+  precision <- tp / (tp + fp)
+  recall    <- tp / (tp + fn)
+  f1        <- 2 * precision * recall / (precision + recall)
+  scores = list(TP = tp, FN = fn, FP = fp, precision = precision, recall = recall, Fscore = f1)
+
+  treemap$match_table = match_table
+  treemap$scores = scores
+
   return(treemap)
 }

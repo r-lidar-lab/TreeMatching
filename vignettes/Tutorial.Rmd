@@ -62,7 +62,7 @@ In this dataset, the results are not terrible, it could be much worse, but we ca
 
 However, in real-world forest inventories, it's common to have omissions (missing trees) and commissions (extra trees). The standard LSAP solver does not support these cases by default.
 
-To fix this, we can introduce dummy trees, and assign a constant cost to matching a real tree with a dummy one. This is exactly what the `unmatch_cost` parameter does. For example, if we set `unmatch_cost = 10000`, it means that matching a tree with a dummy is very expensive, so the algorithm will avoid it unless absolutely necessary.
+To overcome these limits, we can introduce dummy trees, and assign a constant cost to matching a real tree with a dummy one. This is exactly what the `unmatch_cost` parameter does. For example, if we set `unmatch_cost = 10000`, it means that matching a tree with a dummy is very expensive, so the algorithm will avoid it unless absolutely necessary.
 
 Now let’s try using a very low value, like `unmatch_cost = 0.7`. In this case, most trees are **not matched**. That's because it's cheaper for the algorithm to leave a tree unmatched than making an correct match.
 
@@ -85,13 +85,13 @@ The results are much better!! Let’s now tune a few other parameters.
 ### `dxymax` and `dzmax`
 
 - `dxymax` sets the maximum horizontal (XY) distance allowed between two matched trees. If two trees are farther apart than this value, their matching cost is set to infinity, meaning they cannot be matched.
-- `dzmax` sets the maximum vertical (Z) distance allowed. In this tutorial, the Z value is based on DBH, so `dzmax = 0.03` means a 3 cm difference is allowed. For example, a tree measured in the field at 15 cm DBH cannot be matched with a LiDAR tree measured at 11 cm DBH, the cost would be infinite.
+- `dzmax` sets the maximum vertical (Z) distance allowed. In order to work both with ALS using tree height and TLS using DBH this parameters is expressed in percent. In this tutorial, the Z value is based on DBH, so `dzmax = 30` means a 30% difference is allowed between the DBH of the ground inventory and the DBH measured with the lidar. For example, a tree measured in the field at 14 cm DBH cannot be matched with a LiDAR tree measured at 7 cm DBH (50% difference), the cost would be infinite.
 
 After setting reasonable values for these two parameters, the matching results now look much better.
 
 
 ```{r, fig.width=6, fig.height=6}
-tm <- match_trees(tm, dxymax = 2, dzmax = 0.05, zrel = 40, unmatch_cost = 3)
+tm <- match_trees(tm, dxymax = 2, dzmax = 30, zrel = 40, unmatch_cost = 3)
 plot(tm, scale = 2, gg = TRUE)
 ```
 
@@ -103,10 +103,10 @@ By default, the matching cost is simply the 3D distance between two trees, where
 
 To solve this, the Z dimension is scaled so that XY and Z are on a similar scale and can be compared. But this equal scaling isn't always ideal: sometimes DBH or height may dominate the match inappropriately.
 
-That’s where `zrel` comes in. It lets you control the weight of Z (DBH or height) relative to XY. A value of 0 means Z has no weight, matching is based only on XY distance, pretty much like a k-nearest-neighbors (k-NN) search. This often causes incorrect matches, such as pairing a large tree with a nearby smaller one as seen below.
+That’s where `zrel` comes in. It lets you control the weight of Z (DBH or height) relative to XY. A value of 0 means Z has no weight, matching is based only on XY distance, pretty much like a k-nearest-neighbors (k-NN) search. This often causes incorrect matches, such as pairing a large tree with a nearby smaller one (if no constraint the Z difference) as seen below.
 
 ```{r, fig.width=6, fig.height=6}
-tm <- match_trees(tm, dxymax = 2, dzmax = 0.05, zrel = 0, unmatch_cost = 3)
+tm <- match_trees(tm, dxymax = 2, dzmax = 100, zrel = 0, unmatch_cost = 3)
 plot(tm, scale = 2, gg = TRUE)
 ```
 
@@ -129,7 +129,7 @@ On the other hand, `unmatch_cost` is a very important parameter. It should be lo
 Finding the right `unmatch_cost` value can be challenging. If the user does not specify it, the algorithm uses a simple heuristic to estimate a reasonable default.
 
 ```{r, fig.width=6, fig.height=6}
-tm <- match_trees(tm, dxymax = 2, dzmax = 0.05, zrel = 40)
+tm <- match_trees(tm, dxymax = 2, dzmax = 30, zrel = 40)
 plot(tm, scale = 2, gg = TRUE)
 ```
 
@@ -150,3 +150,32 @@ treemap = lsap_app(treemap)
 ```
 
 ![](app.png){width=100%}
+
+## Score and matching table
+
+After applying `match_tree` the `TreeMapMatching` object contains the matching table as well a some standard matching score. True Positive (TP), False Negative (FN), False Positive (FP), precision, recall and F-score.
+
+```{r}
+head(tm$match_table)
+tm$scores
+```
+
+With the matching table the user can compare individual tree attribute from the original data.
+
+```{r, fig.show="hold", fig.width=4, fig.height=4.5}
+
+true_positive = na.omit(tm$match_table)
+dbh_inventory = tm$inventory[true_positive$index_inventory,]$DBH 
+dbh_measured  = tm$measure[true_positive$index_measure,]$DBH * 100 
+plot(dbh_inventory, dbh_measured, asp = 1,
+     xlab = "Ground thruth DBH (cm)",
+     ylab = "Lidar measured DBH (cm)")
+abline(0,1, lty = 3)
+
+height_inventory = tm$inventory[true_positive$index_inventory,]$Ht 
+height_measured  = tm$measure[true_positive$index_measure,]$TH
+plot(height_inventory, height_measured, asp = 1,
+     xlab = "Ground thruth height (m)",
+     ylab = "Lidar measured height (m)")
+abline(0,1, lty = 3)
+```

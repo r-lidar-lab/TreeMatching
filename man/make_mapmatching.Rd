@@ -4,7 +4,7 @@
 \alias{make_mapmatching}
 \title{Create a TreeMapMatching object for tree pairing}
 \usage{
-make_mapmatching(inventory, measured, center, radius = 11.28)
+make_mapmatching(inventory, measured, center, radius = 11.28, buffer = 0.5)
 }
 \arguments{
 \item{inventory}{An `sf` object of class `"TreeMap"` representing the ground truth inventory trees.}
@@ -14,6 +14,11 @@ make_mapmatching(inventory, measured, center, radius = 11.28)
 \item{center}{A numeric vector of length 2 representing the X and Y coordinates of the center point.}
 
 \item{radius}{A numeric value indicating the plot radius (in projection units). Default is 11.28.}
+
+\item{buffer}{The radius of the plot is defined by 'radius'. Due to measurement uncertainty,
+some trees measured with the LiDAR may fall just outside the plot boundary. These trees are
+neither counted nor matched. Adding a buffer allows matching trees outside the plot without
+penalizing the scores if those trees remain unmatched.}
 }
 \value{
 A `TreeMapMatching` object: a list with components:

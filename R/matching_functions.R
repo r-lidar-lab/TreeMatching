@@ -321,10 +321,11 @@ lsap_matching = function(treemap, dxymax = 2, dzmax = 0.05, zrel = 40, unmatch_c
   # Excessive cost for trees beyond the limit of the plot prevents
   # matching
   d = as.numeric(sf::st_distance(measured, treemap$center))
-  inside = d < treemap$radius
+  inside = d < (treemap$radius + treemap$buffer)
   measured$ZDIM[!inside] = inf
 
   # Extract coordinates and add a synthetic Z dimension from ZDIM
+  # and scale it to match the XY coordinates
   coords_inventory_1d = treemap$inventory$ZDIM * factor
   coords_measure_1d = treemap$measured$ZDIM *factor
 
@@ -347,13 +348,17 @@ lsap_matching = function(treemap, dxymax = 2, dzmax = 0.05, zrel = 40, unmatch_c
   # 1D allows to remove connections between trees that have a too big difference in Z (ZDIM)
   # 2D allows to remove connection between trees that have a too big difference in distance
   # 3D is solved as Linear Sum Assignment Problem this is the cost of assignment
-  d1 = dist_matrix(cbind(0, coords_inventory_1d), cbind(0, coords_measure_1d))
+  d1 = dist_matrix(cbind(0, treemap$inventory$ZDIM), cbind(0, treemap$measured$ZDIM))
   d2 = dist_matrix(coords_inventory_2d, coords_measure_2d)
   d3 = dist_matrix(coords_inventory_3d, coords_measure_3d)
 
+  # d1 is converted in percentage of the inventory measure
+  for (i in seq_along(coords_measure_1d))
+    d1[,i] = round(d1[,i]/treemap$inventory$ZDIM*100)
+
   # We add an excessive cost for un matchable pair (too far, too big)
   d3[d2 > dxymax] = inf
-  d3[d1 > dzmax * factor] = inf
+  d3[d1 > dzmax] = inf
 
   # We may have different number of trees to match in each dataset. LSAP is a one-to-one assignment
   # solution and does not have the capability to not match entries. Here we are adding as many placeholder
