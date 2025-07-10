@@ -65,7 +65,7 @@ To allow partial matching (i.e., unmatched trees), dummy trees are added with a 
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">lsap_matching</span><span class="op">(</span></span>
 <span>  <span class="va">treemap</span>,</span>
 <span>  dxymax <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  dzmax <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  dzmax <span class="op">=</span> <span class="fl">40</span>,</span>
 <span>  zrel <span class="op">=</span> <span class="fl">40</span>,</span>
 <span>  unmatch_cost <span class="op">=</span> <span class="st">"auto"</span></span>
 <span><span class="op">)</span></span>
@@ -88,13 +88,15 @@ To allow partial matching (i.e., unmatched trees), dummy trees are added with a 
 
 
 <dt id="arg-dzmax">dzmax<a class="anchor" aria-label="anchor" href="#arg-dzmax"></a></dt>
-<dd><p>Maximum allowed Z difference (e.g., DBH or height, in meters) for a valid match.</p></dd>
+<dd><p>Maximum allowed Z difference (e.g., DBH or height) in % for a valid match. Be careful
+the difference is expressed in %. Default is 40%. A 10 cm DBH tree can be matched with tree in
+6, 14 cm (10 +/- 40% of 10).</p></dd>
 
 
 <dt id="arg-zrel">zrel<a class="anchor" aria-label="anchor" href="#arg-zrel"></a></dt>
 <dd><p>Relative importance of the Z dimension compared to XY. Since Z and XY units differ,
-Z is scaled to be comparable. A value of 0 means Z is ignored; a value of 1 gives Z and XY equal weight.
-Default is 0.5 (i.e., 50% of XY weight).</p></dd>
+Z is scaled to be comparable. A value of 0 means Z is ignored; a value of 1 gives Z and XY equal
+weights. Default is 40%.</p></dd>
 
 
 <dt id="arg-unmatch-cost">unmatch_cost<a class="anchor" aria-label="anchor" href="#arg-unmatch-cost"></a></dt>
