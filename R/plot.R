@@ -69,6 +69,8 @@ compare_plot = function(treemap, scale = 1)
 
 compare_plot_gg = function(treemap, scale = 1)
 {
+  X <- Y <- NULL
+
   inventory = treemap$inventory
   measure = treemap$measured
   radius = treemap$radius

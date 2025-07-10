@@ -10,7 +10,7 @@
 #' @param dxymax Maximum allowed 2D (XY) distance (in projection units) for a valid match.
 #' @param dzmax Maximum allowed Z difference (e.g., DBH or height) in % for a valid match. Be careful
 #' the difference is expressed in %. Default is 40%. A 10 cm DBH tree can be matched with tree in
-#' [6, 14] cm (10 +/- 40% of 10).
+#' 6, 14 cm (10 +/- 40% of 10).
 #' @param zrel Relative importance of the Z dimension compared to XY. Since Z and XY units differ,
 #' Z is scaled to be comparable. A value of 0 means Z is ignored; a value of 1 gives Z and XY equal
 #' weights. Default is 40%.

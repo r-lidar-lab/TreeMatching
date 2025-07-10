@@ -25,7 +25,7 @@ lsap_app(treemap)
 
 \item{dzmax}{Maximum allowed Z difference (e.g., DBH or height) in \% for a valid match. Be careful
 the difference is expressed in \%. Default is 40\%. A 10 cm DBH tree can be matched with tree in
-\link{6, 14} cm (10 +/- 40\% of 10).}
+6, 14 cm (10 +/- 40\% of 10).}
 
 \item{zrel}{Relative importance of the Z dimension compared to XY. Since Z and XY units differ,
 Z is scaled to be comparable. A value of 0 means Z is ignored; a value of 1 gives Z and XY equal
