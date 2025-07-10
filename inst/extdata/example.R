@@ -20,8 +20,8 @@ prf_treemap = function(plot_id)
   #fmeasure = file.path("/home/jr/Téléchargements/PRF025_DBH_HTs.csv")
   measure <- read.csv(fmeasure)
 
-  inventory = standardize(inventory, "Field_Xpj", "Field_Ypj", "DBH", zunits = "cm", crs = 2959)
-  measure   = standardize(measure, "X", "Y", "DBH", zunits = "m", crs = 2959)
+  inventory = standardize(inventory, "Field_Xpj", "Field_Ypj", "DBH", zunits = "cm", crs = 2959, idname = "Tree")
+  measure   = standardize(measure, "X", "Y", "DBH", zunits = "m", crs = 2959, idname = "treeID")
   center    = c(inventory$Easting[1], inventory$Northing[1])
 
   treemap = make_mapmatching(inventory, measure, center = center, radius = 11.28)

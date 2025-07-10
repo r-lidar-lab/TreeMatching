@@ -14,7 +14,8 @@
 #' @param zunits Unit of the zname values. Either `"cm"` (default) or `"m"` or `"mm"`. If "cm" or "mm"
 #' the value will be converted to meters.
 #' @param crs Coordinate Reference System to assign to the output geometry (as a `sf::st_crs()` object).
-#'
+#' @paran idname Name of the column containing a unique ID for each tree. Not mandatory but will be
+#' leverage in the plot function to display real tree IDs.
 #'
 #' @return An `sf` object with:
 #' \itemize{
@@ -36,7 +37,7 @@
 #'   crs = 2959)
 #' @seealso \code{\link[sf]{st_as_sf}}, \code{\link[sf]{st_crs}}, \code{\link[dplyr]{rename_with}}
 #' @export
-standardize = function(data, xname, yname, zname, zunits = "cm", crs = sf::NA_crs_)
+standardize = function(data, xname, yname, zname, zunits = "cm", crs = sf::NA_crs_, idname = NULL)
 {
   match.arg(zunits, c("m", "cm", "mm"))
 
@@ -53,7 +54,7 @@ standardize = function(data, xname, yname, zname, zunits = "cm", crs = sf::NA_cr
     for (j in i) warning(paste("Input contains an empty geometry line", j))
   }
 
-  xy = st_coordinates(data)
+  xy = sf::st_coordinates(data)
   if(any(duplicated(xy)))
   {
     i = which(duplicated(xy))
@@ -67,6 +68,9 @@ standardize = function(data, xname, yname, zname, zunits = "cm", crs = sf::NA_cr
     i = which(is.na(data$ZDIM))
     stop(paste("Input contains an empty Z dimension line", j))
   }
+
+  if (!is.null(idname))
+    data$TREEUID = data[[idname]]
 
   if (zunits == "cm") data$ZDIM = data$ZDIM/100
   if (zunits == "mm") data$ZDIM = data$ZDIM/1000
