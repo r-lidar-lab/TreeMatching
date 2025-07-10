@@ -7,7 +7,7 @@
 
 Matching trees between different surveys (e.g., lidar-derived and field-measured) is challenging due to non-rigid and local misalignments. This package introduces a robust approach where X and Y come from the spatial coordinates and Z is synthesized from tree DBH or tree height to improve the quality of the matching.
 
-The current version includes on matching strategies based on solving Linear Sum Assignment Problem with the [Hungarian algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm).
+The current version includes one matching strategy based on solving Linear Sum Assignment Problem with the [Hungarian algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm).
 
 Read the [tutorial 📖](https://r-lidar.github.io/TreeMatching/articles/Tutorial.html)
 
