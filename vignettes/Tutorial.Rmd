@@ -36,9 +36,23 @@ data(PRF025_Lidar)
 The user's data can come in any format, with various naming conventions and unit standards. Therefore, to ensure everything works correctly, we first need to standardize the data by specifying which columns contain the X and Y coordinates, as well as the DBH (or tree height), what are the units and so on.
 
 ```{r}
-PRF025_Field <- standardize(PRF025_Field, "Field_Xpj", "Field_Ypj", "DBH", "cm", crs = 2959)
-PRF025_Lidar <- standardize(PRF025_Lidar, "X", "Y", "DBH", "m", crs = 2959)
+PRF025_Field <- standardize(PRF025_Field, "Field_Xpj", "Field_Ypj", "DBH", "cm", crs = 2959, idname = "Tree")
+PRF025_Lidar <- standardize(PRF025_Lidar, "X", "Y", "DBH", "m", crs = 2959, idname = "treeID")
 ```
+
+<!-- extra‑info box -->
+<div style="
+     border-left: 4px solid #1c90f3;
+     background:   #e7f4ff;
+     padding:      0.75em 1em;
+     margin:       1em 0;
+     border-radius: 4px;
+     ">
+  <p style="margin:0;">
+    Register the column that records a unique ID for each tree with `idname = ...` is not mandatory. It only provide extra graphical display and by ID results.
+  </p>
+</div>
+
 
 Next, for various reasons, the algorithm needs to know the center and size of the plot we're working with. This is mainly used to filter out trees that fall outside the plot boundaries and plot graphics. In this specific dataset, the center of the plot is already stored and repeated in the `Easting` and `Northing` columns. We now use this information to create the `TreeMap` object that we'll be working with in the following steps.
 
@@ -58,7 +72,7 @@ tm <- match_trees(tm, dxymax = 10000, dzmax = 10000, zrel = 40, unmatch_cost = 1
 plot(tm, scale = 2, gg = TRUE)
 ```
 
-In this dataset, the results are not terrible, it could be much worse, but we can see that some irrelevant trees are matched. This happens because the algorithm is trying to minimize the cost of matching every tree in the inventory with a tree in the LiDAR data, whether it makes sense or not.
+In this dataset, the results are not terrible, **it could be much worse**, but we can see that some irrelevant trees are matched. This happens because the algorithm is trying to minimize the cost of matching every tree in the inventory with a tree in the LiDAR data, whether it makes sense or not.
 
 However, in real-world forest inventories, it's common to have omissions (missing trees) and commissions (extra trees). The standard LSAP solver does not support these cases by default.
 

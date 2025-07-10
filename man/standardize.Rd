@@ -4,7 +4,15 @@
 \alias{standardize}
 \title{Standardize tree data for use in TreeMap matching}
 \usage{
-standardize(data, xname, yname, zname, zunits = "cm", crs = sf::NA_crs_)
+standardize(
+  data,
+  xname,
+  yname,
+  zname,
+  zunits = "cm",
+  crs = sf::NA_crs_,
+  idname = NULL
+)
 }
 \arguments{
 \item{data}{A `data.frame` or `sf` object with tree records .}
@@ -20,6 +28,9 @@ values or tree height.}
 the value will be converted to meters.}
 
 \item{crs}{Coordinate Reference System to assign to the output geometry (as a `sf::st_crs()` object).}
+
+\item{idname}{Name of the column containing a unique ID for each tree. Not mandatory but will be
+leverage in the plot function to display real tree IDs and to add the id of each tree in the match table}
 }
 \value{
 An `sf` object with:

@@ -14,8 +14,8 @@
 #' @param zunits Unit of the zname values. Either `"cm"` (default) or `"m"` or `"mm"`. If "cm" or "mm"
 #' the value will be converted to meters.
 #' @param crs Coordinate Reference System to assign to the output geometry (as a `sf::st_crs()` object).
-#' @paran idname Name of the column containing a unique ID for each tree. Not mandatory but will be
-#' leverage in the plot function to display real tree IDs.
+#' @param idname Name of the column containing a unique ID for each tree. Not mandatory but will be
+#' leverage in the plot function to display real tree IDs and to add the id of each tree in the match table
 #'
 #' @return An `sf` object with:
 #' \itemize{

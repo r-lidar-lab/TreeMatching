@@ -69,6 +69,17 @@ match_trees = function(treemap, method = lsap_matching, ...)
     match_table = rbind(match_table, missing)
   }
 
+  cost = match_table$cost
+  match_table$cost = NULL
+
+  if (!is.null(treemap$inventory$TREEUID))
+    match_table$id_inventory = as.numeric(treemap$inventory$TREEUID[match_table$index_inventory])
+
+  if (!is.null(treemap$measured$TREEUID))
+    match_table$id_measure = as.numeric(treemap$measured$TREEUID[match_table$index_measure])
+
+  match_table$cost = cost
+
   # Label Omission/Commission
   match_table$state = "Matched"
   match_table$state[is.na(match_table$index_measure)] = "Omission"
