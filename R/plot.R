@@ -370,11 +370,11 @@ plot_spatial_matching_gg = function(treemap, scale = 1)
   }
 
   # Prepare coordinate data frames for text labels
-  coords_inv <- sf::st_coordinates(inventory) + inventory$ZDIM/2*scale *1.25
+  coords_inv <- sf::st_coordinates(inventory) - inventory$ZDIM/2*scale *1.25
   coords_inv_df <- data.frame(X = coords_inv[, 1], Y = coords_inv[, 2], label = shapes_inventory$label)
   coords_inv_df$plot_color = inventory$plot_color
 
-  coords_mea <- sf::st_coordinates(measure) - measure$ZDIM/2*scale *1.25
+  coords_mea <- sf::st_coordinates(measure) + measure$ZDIM/2*scale *1.25
   coords_mea_df <- data.frame(X = coords_mea[, 1], Y = coords_mea[, 2], label = shapes_measure$label)
   coords_mea_df$plot_color = measure$plot_color
 
