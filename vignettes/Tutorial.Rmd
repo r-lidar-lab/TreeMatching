@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 `TreeMatching` matches trees from a LiDAR dataset (either ALS or TLS) to trees in an inventory dataset by solving a [Linear Sum Assignment Problem (LSAP)](https://en.wikipedia.org/wiki/Assignment_problem) in 3D space. The X and Y dimensions represent the tree positions (a positional matching), while the third Z dimension is artificially created using either DBH (for TLS) or tree height (for ALS). This synthetic Z-dimension improves the accuracy of the matching and helps avoid false positives.
 
-The package uses the [Hungarian algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm), which always finds the optimal solution to the LSAP. This guarantees the best possible matching with the lowest total cost, based on a given cost matrix. However, the real challenge is to define a good cost function, one that leads to meaningful and accurate matches between trees.
+The package uses the [Hungarian algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm), which always finds the optimal solution to the LSAP. This guarantees the best possible matching with the lowest total cost, based on a given cost matrix. However, **the real challenge is to define a good cost function**, one that leads to meaningful and accurate matches between trees.
 
 In this tutorial, we explain how `TreeMatching` works and how its parameters influence the results.
 
@@ -117,7 +117,7 @@ By default, the matching cost is simply the 3D distance between two trees, where
 
 To solve this, the Z dimension is scaled so that XY and Z are on a similar scale and can be compared. But this equal scaling isn't always ideal: sometimes DBH or height may dominate the match inappropriately.
 
-That's where `zrel` comes in. It lets you control the weight of Z (DBH or height) relative to XY. A value of 0 means Z has no weight, matching is based only on XY distance, pretty much like a k-nearest-neighbors (k-NN) search. This often causes incorrect matches, such as pairing a large tree with a nearby smaller one (if no constraint the Z difference) as seen below.
+That's where `zrel` comes in. It lets you control the weight of Z (DBH or height) relative to XY. A value of 0 means Z has no weight, matching is based only on XY distance, pretty much like a k-nearest-neighbors (k-NN) search. This often causes incorrect matches, such as pairing a large tree with a nearby smaller one (if we have no constraint the Z difference) as seen below.
 
 ```{r, fig.width=6, fig.height=6}
 tm <- match_trees(tm, dxymax = 2, dzmax = 100, zrel = 0, unmatch_cost = 3)
@@ -140,7 +140,18 @@ The `zrel` parameter is not critical, but fine-tuning it can improve a few edge-
 
 On the other hand, `unmatch_cost` is a very important parameter. It should be lower than the cost of a bad match, to avoid forcing incorrect pairings but higher than the cost of a good match, to prevent skipping valid matches.
 
+<div style="
+     border-left: 4px solid #1c90f3;
+     background:   #e7f4ff;
+     padding:      0.75em 1em;
+     margin:       1em 0;
+     border-radius: 4px;
+     ">
+  <p style="margin:0;">
 Finding the right `unmatch_cost` value can be challenging. If the user does not specify it, the algorithm uses a simple heuristic to estimate a reasonable default.
+  </p>
+</div>
+
 
 ```{r, fig.width=6, fig.height=6}
 tm <- match_trees(tm, dxymax = 2, dzmax = 30, zrel = 40)
@@ -160,7 +171,7 @@ This visual interface is especially useful for beginners, as it allows you to:
 This makes it much easier to understand the impact of each parameter and to fine-tune your matching process.
 
 ```r
-treemap = lsap_app(treemap)
+tm = lsap_app(tm)
 ```
 
 ![](app.png){width=100%}
@@ -170,8 +181,10 @@ treemap = lsap_app(treemap)
 After applying `match_tree` the `TreeMapMatching` object contains the matching table as well a some standard matching score. True Positive (TP), False Negative (FN), False Positive (FP), precision, recall and F-score.
 
 ```{r}
-head(tm$match_table)
-tm$scores
+mt = tm$match_table
+scores = tm$scores
+print(tm)
+head(mt)
 ```
 
 With the matching table the user can compare individual tree attribute from the original data.
