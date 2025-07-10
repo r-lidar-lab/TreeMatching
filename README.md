@@ -5,12 +5,9 @@
 
 **TreeMatching** is an R package that provides tools for matching trees between two spatial datasets, typically lidar-derived tree segmentations and field-measured datasets.
 
-Matching trees between different surveys (e.g., lidar-derived and field-measured) is challenging due to non-rigid and local misalignments. This package introduces robust approaches and 3D strategies, where X and Y come from the spatial coordinates and Z is synthesized from tree DBH or tree height to improve the quality of the matching.
+Matching trees between different surveys (e.g., lidar-derived and field-measured) is challenging due to non-rigid and local misalignments. This package introduces a robust approach where X and Y come from the spatial coordinates and Z is synthesized from tree DBH or tree height to improve the quality of the matching.
 
-The current version includes two matching strategies:
-
-- Solving Linear Sum Assignment Problem ([Hungarian algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm)) (**preferred method**)
-- Bidirectional 2-nearest-neighbors 3D matching (**experimental**)
+The current version includes on matching strategies based on solving Linear Sum Assignment Problem with the [Hungarian algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm).
 
 Read the [tutorial 📖](https://r-lidar.github.io/TreeMatching/articles/Tutorial.html)
 
