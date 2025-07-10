@@ -1,5 +1,4 @@
 ![license](https://img.shields.io/badge/Licence-MIT-blue.svg)
-![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-990000)
 
 # TreeMatching
 
