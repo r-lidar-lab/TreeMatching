@@ -5,8 +5,8 @@
 #'
 #' @param treemap A `TreeMapMatching` object created with \code{\link{make_mapmatching}}.
 #' @param method A function that performs the matching. It must accept a `TreeMapMatching` object
-#'   as its first argument and return a match table (typically a `data.table`).
-#'   Defaults to \code{\link{lsap_matching}} and is the recommended method.
+#'   as its first argument and return a match table. Defaults to \code{\link{lsap_matching}} and
+#'   is the recommended method. Previous other methods were removed from the package.
 #' @param ... Additional arguments passed to the matching method.
 #'
 #' @return A `TreeMapMatching` object, identical to the input but with an added
@@ -17,7 +17,7 @@
 #' By default, it uses a 2 nearest-neighbors 3D matching function, but custom methods can be supplied.
 #' The result is returned as an enriched `TreeMapMatching` object, ready for further analysis or plotting.
 #'
-#' @seealso \code{\link{make_mapmatching}}, \code{\link{bidirectionnal_double_matching}}, \code{\link{lsap_matching}}
+#' @seealso \code{\link{make_mapmatching}}, \code{\link{lsap_matching}}
 #' @export
 #' @examples
 #' data(PRF025_Field)
@@ -63,8 +63,11 @@ match_trees = function(treemap, method = lsap_matching, ...)
   full_index <- 1:nrow(treemap$measured)
   b = full_index %in% match_table$index_measure
   index = full_index[!b]
-  missing = data.frame(index_inventory = NA, index_measure = index, cost = NA)
-  match_table = rbind(match_table, missing)
+  if (length(index) > 0)
+  {
+    missing = data.frame(index_inventory = NA, index_measure = index, cost = NA)
+    match_table = rbind(match_table, missing)
+  }
 
   # Label Omission/Commission
   match_table$state = "Matched"

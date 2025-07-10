@@ -35,17 +35,6 @@ plot.TreeMapMatching = function(x, y, scale = 1, rgl = FALSE, gg = FALSE, show_m
   }
 }
 
-plot_plot = function(x, scale = 1)
-{
-  center = get_center(x)
-  plot(sf::st_buffer(center, x$radius), border = "red", axes = T)
-  plot(sf::st_buffer(center, 4), add = T, border = "blue")
-  plot(center, add = T, col = "red", cex = 2, pch = 3)
-
-  shapes = sf::st_buffer(x, x$ZDIM/2*scale)
-  plot(sf::st_geometry(shapes), add = T, col = "gray")
-}
-
 compare_plot = function(treemap, scale = 1)
 {
   inventory = treemap$inventory
@@ -182,21 +171,28 @@ plot_spatial_matching = function(treemap, scale = 1)
   match_table = treemap$match_table
   match_table = stats::na.omit(match_table)
 
-  d = as.numeric(sf::st_distance(treemap$measured, treemap$center))
-  inside = d < treemap$radius
 
   matched = match_table[!is.na(match_table$index_inventory),]
 
+  # Plotting circles and center
   plot(sf::st_buffer(center, radius+buffer), border = "red", lty = 3, axes = TRUE)
   plot(sf::st_buffer(center, radius), border = "red", add = T)
   plot(sf::st_buffer(center, 4), add = T, border = "blue")
   plot(center, add = T, col = "red", cex = 2, pch = 3)
 
+  # Plotting inventory in black
+  d = as.numeric(sf::st_distance(treemap$inventory, treemap$center))
+  inside = d < treemap$radius
   color = rep("orange", nrow(inventory))
   color[matched$index_inventory] = "black"
+  color[!inside] = "gray"
   shapes = sf::st_buffer(inventory, inventory$ZDIM/2*scale)
   plot(sf::st_geometry(shapes), add = T, col = color, border = color)
   graphics::text(sf::st_coordinates(inventory)+0.15, labels = 1:nrow(inventory), cex = 0.5, col = darken(color))
+
+  # Plotting lidar measure in black
+  d = as.numeric(sf::st_distance(treemap$measured, treemap$center))
+  inside = d < treemap$radius
 
   shapes = sf::st_buffer(measure, measure$ZDIM/2*scale)
   color = rep("red", nrow(measure))

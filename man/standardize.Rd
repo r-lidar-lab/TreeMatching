@@ -34,7 +34,8 @@ An `sf` object with:
 Converts a table of tree data into a standardized spatial format with consistent naming,
 and units and coordinate reference system to work with any user data storage convention.
 This function prepares the input data to be used as part of a `TreeMapMatchinh` object for tree
-matching and analysis.
+matching and analysis. It also perform some quality check in order to catch obvious error in the
+data such as NAs or duplicated trees.
 }
 \examples{
 data(PRF025_Field)

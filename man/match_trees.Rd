@@ -10,8 +10,8 @@ match_trees(treemap, method = lsap_matching, ...)
 \item{treemap}{A `TreeMapMatching` object created with \code{\link{make_mapmatching}}.}
 
 \item{method}{A function that performs the matching. It must accept a `TreeMapMatching` object
-as its first argument and return a match table (typically a `data.table`).
-Defaults to \code{\link{lsap_matching}} and is the recommended method.}
+as its first argument and return a match table. Defaults to \code{\link{lsap_matching}} and
+is the recommended method. Previous other methods were removed from the package.}
 
 \item{...}{Additional arguments passed to the matching method.}
 }
@@ -58,5 +58,5 @@ plot(treemap, rgl = TRUE)
 treemap$match_table
 }
 \seealso{
-\code{\link{make_mapmatching}}, \code{\link{bidirectionnal_double_matching}}, \code{\link{lsap_matching}}
+\code{\link{make_mapmatching}}, \code{\link{lsap_matching}}
 }

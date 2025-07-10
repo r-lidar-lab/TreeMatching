@@ -3,7 +3,8 @@
 #' Converts a table of tree data into a standardized spatial format with consistent naming,
 #' and units and coordinate reference system to work with any user data storage convention.
 #' This function prepares the input data to be used as part of a `TreeMapMatchinh` object for tree
-#' matching and analysis.
+#' matching and analysis. It also perform some quality check in order to catch obvious error in the
+#' data such as NAs or duplicated trees.
 #'
 #' @param data A `data.frame` or `sf` object with tree records .
 #' @param xname Name of the column containing X coordinates (no used with sf objects).
@@ -45,7 +46,28 @@ standardize = function(data, xname, yname, zname, zunits = "cm", crs = sf::NA_cr
     sf::st_crs(data) = crs
   }
 
+  if (any(sf::st_is_empty(data)))
+  {
+    i = which(sf::st_is_empty(data))
+    data = data[-i,]
+    for (j in i) warning(paste("Input contains an empty geometry line", j))
+  }
+
+  xy = st_coordinates(data)
+  if(any(duplicated(xy)))
+  {
+    i = which(duplicated(xy))
+    stop(paste("Duplicated XY coordinates lines:", paste(i, collapse = " ")))
+  }
+
   data$ZDIM = data[[zname]]
+
+  if (anyNA(data$ZDIM))
+  {
+    i = which(is.na(data$ZDIM))
+    stop(paste("Input contains an empty Z dimension line", j))
+  }
+
   if (zunits == "cm") data$ZDIM = data$ZDIM/100
   if (zunits == "mm") data$ZDIM = data$ZDIM/1000
 

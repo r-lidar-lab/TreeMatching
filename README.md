@@ -26,7 +26,7 @@ PRF025_Lidar <- standardize(PRF025_Lidar, "X", "Y", "DBH", "m", crs = 2959)
 center <- c(PRF025_Field$Easting[1], PRF025_Field$Northing[1])
 
 treemap <- make_mapmatching(PRF025_Field, PRF025_Lidar, center, radius = 11.28)
-treemap <- match_trees(treemap, method = lsap_matching, dxymax = 2, dzmax = 0.05)
+treemap <- match_trees(treemap, method = lsap_matching, dxymax = 2, dzmax = 40)
 
 plot(treemap, scale = 2)
 plot(treemap, rgl = TRUE)
