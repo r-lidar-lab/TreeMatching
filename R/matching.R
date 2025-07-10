@@ -73,10 +73,10 @@ match_trees = function(treemap, method = lsap_matching, ...)
   match_table$cost = NULL
 
   if (!is.null(treemap$inventory$TREEUID))
-    match_table$id_inventory = as.numeric(treemap$inventory$TREEUID[match_table$index_inventory])
+    match_table$id_inventory = treemap$inventory$TREEUID[match_table$index_inventory]
 
   if (!is.null(treemap$measured$TREEUID))
-    match_table$id_measure = as.numeric(treemap$measured$TREEUID[match_table$index_measure])
+    match_table$id_measure = treemap$measured$TREEUID[match_table$index_measure]
 
   match_table$cost = cost
 
