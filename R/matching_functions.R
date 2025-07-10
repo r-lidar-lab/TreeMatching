@@ -74,14 +74,14 @@ lsap_matching = function(treemap, dxymax = 2, dzmax = 40, zrel = 40, unmatch_cos
 
   # Extract coordinates and add a synthetic Z dimension from ZDIM
   # and scale it to match the XY coordinates
-  coords_inventory_1d = treemap$inventory$ZDIM * factor
-  coords_measure_1d = treemap$measured$ZDIM *factor
+  coords_inventory_1d = inventory$ZDIM * factor
+  coords_measure_1d = measured$ZDIM * factor
 
-  coords_inventory_2d <- sf::st_coordinates(treemap$inventory)
+  coords_inventory_2d <- sf::st_coordinates(inventory)
   coords_measure_2d   <- sf::st_coordinates(measured)
 
   coords_inventory_3d <- cbind(coords_inventory_2d, coords_inventory_1d)
-  coords_measure_3d   <- cbind(coords_measure_2d,   coords_measure_1d)
+  coords_measure_3d   <- cbind(coords_measure_2d, coords_measure_1d)
 
   dist_matrix <- function(A, B)
   {
