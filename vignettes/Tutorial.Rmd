@@ -194,14 +194,14 @@ true_positive = na.omit(tm$match_table)
 dbh_inventory = tm$inventory[true_positive$index_inventory,]$DBH 
 dbh_measured  = tm$measure[true_positive$index_measure,]$DBH * 100 
 plot(dbh_inventory, dbh_measured, asp = 1, pch = 3,
-     xlab = "Ground thruth DBH (cm)",
+     xlab = "Ground truth DBH (cm)",
      ylab = "Lidar measured DBH (cm)")
 abline(0,1, lty = 3)
 
 height_inventory = tm$inventory[true_positive$index_inventory,]$Ht 
 height_measured  = tm$measure[true_positive$index_measure,]$TH
 plot(height_inventory, height_measured, asp = 1, pch = 3,
-     xlab = "Ground thruth height (m)",
+     xlab = "Ground truth height (m)",
      ylab = "Lidar measured height (m)")
 abline(0,1, lty = 3)
 ```

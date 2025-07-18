@@ -391,12 +391,12 @@ plot_spatial_matching_gg = function(treemap, scale = 1)
     ggplot2::geom_sf(data = sf::st_buffer(treemap$center, treemap$radius+treemap$buffer), fill = NA, color = "red", linetype = 3) +
     ggplot2::geom_sf(data = sf::st_buffer(treemap$center, treemap$radius), fill = NA, color = "red") +
     ggplot2::geom_sf(data = sf::st_buffer(treemap$center, 4), fill = NA, color = "blue") +
+    ggplot2::geom_sf(data = sf_lines, color = "blue2", linewidth = 0.25) +
     ggplot2::geom_sf(data = treemap$center, shape = 3, size = 3, color = "red") +
     ggplot2::geom_sf(data = shapes_inventory, fill = shapes_inventory$color) +
     ggplot2::geom_text(data = coords_inv_df, ggplot2::aes(x = X, y = Y, label = label), color = coords_inv_df$plot_color, size = 2) +
     ggplot2::geom_sf(data = shapes_measure, fill = shapes_measure$color, alpha = 0.8) +
     ggplot2::geom_text(data = coords_mea_df, ggplot2::aes(x = X, y = Y, label = label), color = coords_mea_df$plot_color, size = 2) +
-    ggplot2::geom_sf(data = sf_lines, color = "blue2") +
     ggplot2::theme_minimal() +
     ggplot2::theme(panel.grid.major = ggplot2::element_line(color = "gray95")) +
     ggplot2::geom_point(data = legend_df, ggplot2::aes(x = x, y = y, fill = class), shape = 21, size = 2) +

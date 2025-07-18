@@ -32,7 +32,7 @@ treemap = prf_treemap(plot_id)
 
 plot(treemap, scale = 2)
 
-treemap = match_trees(treemap, lsap_matching, dxymax = 1.5, dzmax = 30, zrel = 40)
+treemap = match_trees(treemap, lsap_matching, dxymax = 2, dzmax = 40, zrel = 40)
 plot(treemap, scale = 2)
 plot(treemap, scale = 2, gg= T)
 plot(treemap, rgl = TRUE)
